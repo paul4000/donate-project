@@ -28,6 +28,7 @@ public class SavingContractService {
 
     public void saveProject(String projectHash) throws Exception {
 
+
         SampleContract saveProject = getSaveProject(CONTRACT_ADDRESS);
 
 //        saveProject.setSample(new BigInteger("1")).send();
