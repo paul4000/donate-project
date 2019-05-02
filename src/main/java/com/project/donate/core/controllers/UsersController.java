@@ -5,6 +5,7 @@ import com.project.donate.core.auth.SecurityService;
 import com.project.donate.core.auth.UserService;
 import com.project.donate.core.exceptions.WalletCreationException;
 import com.project.donate.core.helpers.WalletHelper;
+import com.project.donate.core.models.Role;
 import com.project.donate.core.models.User;
 import com.project.donate.core.models.dtos.UserTO;
 import org.apache.log4j.Level;
@@ -83,6 +84,7 @@ public class UsersController {
         userToAdd.setUsername(userTO.getUsername());
         userToAdd.setAccount(accountAddress.get());
         userToAdd.setWalletFile(walletFileName.get());
+        userToAdd.setRole(Role.valueOf(userTO.getAccountRole()));
 
         User savedUser = userService.saveUser(userToAdd);
 

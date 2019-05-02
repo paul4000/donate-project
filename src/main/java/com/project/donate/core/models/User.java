@@ -2,6 +2,8 @@ package com.project.donate.core.models;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,9 +33,11 @@ public class User {
     @Column(unique = true)
     private String account;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
 
     public User() {
-//        recipes = new HashSet<>();
     }
 
     public long getId() {
@@ -91,5 +95,13 @@ public class User {
 
     public void setAccount(String account) {
         this.account = account;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }
