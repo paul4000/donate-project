@@ -1,4 +1,4 @@
-package com.project.donate.core.accounts;
+package com.project.donate.core.service.accounts;
 
 import com.project.donate.core.helpers.PropertiesUtils;
 import org.apache.log4j.Logger;

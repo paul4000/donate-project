@@ -1,6 +1,6 @@
 package com.project.donate.core.controllers;
 
-import com.project.donate.core.accounts.AccountsService;
+import com.project.donate.core.service.accounts.AccountsService;
 import com.project.donate.core.auth.SecurityService;
 import com.project.donate.core.auth.UserService;
 import com.project.donate.core.exceptions.WalletCreationException;
