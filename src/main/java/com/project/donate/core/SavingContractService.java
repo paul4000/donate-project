@@ -32,7 +32,7 @@ public class SavingContractService {
         SampleContract saveProject = getSaveProject(CONTRACT_ADDRESS);
 
 //        saveProject.setSample(new BigInteger("1")).send();
-//        saveProject.set(projectHash).send();
+//        saveProject.set(projectHash).send();s
 
         LOGGER.info("Saving hash");
 

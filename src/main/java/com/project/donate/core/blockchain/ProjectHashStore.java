@@ -42,7 +42,7 @@ public class ProjectHashStore extends Contract {
 
     public static final String FUNC_PROJECTINDICESSTORAGE = "projectIndicesStorage";
 
-    public static final String FUNC_REGISTERPROJECT = "registerProject";
+    public static final String FUNC_REGISTERPROJECT = "registerProjectInDatabase";
 
     @Deprecated
     protected ProjectHashStore(String contractAddress, Web3j web3j, Credentials credentials, BigInteger gasPrice, BigInteger gasLimit) {

@@ -1,7 +1,6 @@
 package com.project.donate.core.auth;
 
 import com.project.donate.core.models.User;
-import com.project.donate.core.models.dtos.UserTO;
 import com.project.donate.core.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,5 +30,11 @@ public class UserService {
 
         return usersRepository.save(user);
 
+    }
+
+    public String getWalletName(String username) {
+
+        return usersRepository.findByUsername(username)
+                .getWalletFile();
     }
 }
