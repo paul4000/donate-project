@@ -1,6 +1,7 @@
 package com.project.donate.core.helpers;
 
 
+import com.project.donate.core.exceptions.blockchain.ConvertProjectDataException;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.codec.binary.Hex;
@@ -23,7 +24,14 @@ public class ProjectContractTypesConverter {
 
     public static byte[] convertProjectHash(String projectHash) throws DecoderException {
 
-        return Hex.decodeHex(projectHash);
+        if(projectHash != null && projectHash.length() == 64) {
+
+            return Hex.decodeHex(projectHash);
+
+        } else {
+            throw new ConvertProjectDataException();
+        }
+
     }
 
 }

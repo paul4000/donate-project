@@ -1,5 +1,6 @@
 package com.project.donate.core.controllers;
 
+import com.project.donate.core.exceptions.DuplicateUserException;
 import com.project.donate.core.service.accounts.AccountsService;
 import com.project.donate.core.auth.SecurityService;
 import com.project.donate.core.auth.UserService;
@@ -50,7 +51,6 @@ public class UsersController {
         this.accountsService = accountsService;
     }
 
-
     @PostMapping(path = "/register")
     public ResponseEntity register(@RequestBody UserTO userTO) {
 
@@ -60,6 +60,11 @@ public class UsersController {
                 userTO.getPasswordToAccount() : userTO.getPassword();
 
         Optional<String> walletFileName;
+
+        boolean userExist = userService.checkIfExist(userTO.getEmail(), userTO.getUsername());
+
+        if(userExist) throw new DuplicateUserException();
+
         try {
 
             walletFileName = accountsService.createWalletFile(passwordToAccount);

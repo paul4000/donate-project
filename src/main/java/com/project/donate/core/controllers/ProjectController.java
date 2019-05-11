@@ -38,10 +38,18 @@ public class ProjectController {
         return ResponseEntity.ok().build();
     }
 
-//    @GetMapping(path = "/register")
-//    public ResponseEntity registerInBlockchain(@RequestParam String passwordToWallet, @RequestParam long projectId) {
-//
-//        projectsService.registerInBlockchain(passwordToWallet, projectId);
-//
-//    }
+    @GetMapping(path = "/register")
+    public ResponseEntity registerInBlockchain(@RequestParam String passwordToWallet, @RequestParam long projectId) {
+
+        projectsService.registerInBlockchain(passwordToWallet, projectId);
+
+        return ResponseEntity.ok().build();
+
+    }
+
+    @GetMapping(path = "/open")
+    public ResponseEntity openProject(@RequestParam String passwordToWallet, @RequestParam long projectId) {
+        projectsService.openProject(passwordToWallet, projectId);
+        return null;
+    }
 }

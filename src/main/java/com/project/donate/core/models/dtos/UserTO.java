@@ -8,7 +8,7 @@ public class UserTO {
     private String password;
     private String passwordConfirmation;
     private String passwordToAccount;
-    private String getPasswordToAccountConfirm;
+    private String passwordToAccountConfirm;
     private String accountRole;
 
     public String getName() {
@@ -59,12 +59,12 @@ public class UserTO {
         this.passwordToAccount = passwordToAccount;
     }
 
-    public String getGetPasswordToAccountConfirm() {
-        return getPasswordToAccountConfirm;
+    public String getPasswordToAccountConfirm() {
+        return passwordToAccountConfirm;
     }
 
-    public void setGetPasswordToAccountConfirm(String getPasswordToAccountConfirm) {
-        this.getPasswordToAccountConfirm = getPasswordToAccountConfirm;
+    public void setPasswordToAccountConfirm(String passwordToAccountConfirm) {
+        this.passwordToAccountConfirm = passwordToAccountConfirm;
     }
 
     public String getAccountRole() {

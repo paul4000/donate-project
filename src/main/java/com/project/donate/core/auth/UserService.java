@@ -7,6 +7,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.Optional;
+
 @Service
 public class UserService {
 
@@ -36,5 +38,12 @@ public class UserService {
 
         return usersRepository.findByUsername(username)
                 .getWalletFile();
+    }
+
+    public boolean checkIfExist(String email, String username) {
+
+        User byUsername = usersRepository.findByUsernameOrEmail(username, email);
+
+        return Optional.ofNullable(byUsername).isPresent();
     }
 }

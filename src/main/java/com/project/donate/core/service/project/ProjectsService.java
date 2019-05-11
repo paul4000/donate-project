@@ -119,7 +119,9 @@ public class ProjectsService {
             throw new ContractCallException("ProjectHashStore contract register project has problems");
         }
 
-
     }
 
+    public void openProject(String passwordToWallet, long projectId) {
+
+    }
 }
