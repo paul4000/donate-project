@@ -4,6 +4,7 @@ import com.project.donate.core.models.Project;
 import com.project.donate.core.models.dtos.ProjectTO;
 import com.project.donate.core.service.project.ProjectsService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -27,11 +29,11 @@ public class ProjectController {
         this.projectsService = projectsService;
     }
 
-    @PostMapping(path = "/upload")
-    public ResponseEntity register(@RequestBody ProjectTO projectFile) {
+    @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity register(@RequestParam MultipartFile multipartFile, @RequestParam String name, @RequestParam String summary) {
 
-        Optional<Project> project = projectsService.registerProjectInDatabase(projectFile.getMultipartFile(),
-                projectFile.getSummary(), projectFile.getName());
+        Optional<Project> project = projectsService.registerProjectInDatabase(multipartFile,
+                summary, name);
 
         if (project.isEmpty()) return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
 

@@ -1,23 +1,25 @@
 package com.project.donate.core.controllers;
 
-import com.project.donate.core.exceptions.DuplicateUserException;
-import com.project.donate.core.service.accounts.AccountsService;
 import com.project.donate.core.auth.SecurityService;
 import com.project.donate.core.auth.UserService;
+import com.project.donate.core.exceptions.DuplicateUserException;
 import com.project.donate.core.exceptions.WalletCreationException;
 import com.project.donate.core.helpers.WalletHelper;
 import com.project.donate.core.models.Role;
 import com.project.donate.core.models.User;
 import com.project.donate.core.models.dtos.UserTO;
+import com.project.donate.core.service.accounts.AccountsService;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.web3j.crypto.CipherException;
 
@@ -63,7 +65,7 @@ public class UsersController {
 
         boolean userExist = userService.checkIfExist(userTO.getEmail(), userTO.getUsername());
 
-        if(userExist) throw new DuplicateUserException();
+        if (userExist) throw new DuplicateUserException();
 
         try {
 
@@ -75,11 +77,11 @@ public class UsersController {
             throw new WalletCreationException();
         }
 
-        if(walletFileName.isEmpty()) throw new WalletCreationException();
+        if (walletFileName.isEmpty()) throw new WalletCreationException();
 
         Optional<String> accountAddress = WalletHelper.extractAccountAddress(walletFileName.get());
 
-        if(accountAddress.isEmpty()) throw new WalletCreationException();
+        if (accountAddress.isEmpty()) throw new WalletCreationException();
 
         User userToAdd = new User();
 
@@ -96,6 +98,16 @@ public class UsersController {
         securityService.login(savedUser.getUsername(), userTO.getPassword());
 
         return new ResponseEntity<>(savedUser, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/login")
+    public ResponseEntity loginUser(@RequestParam String username, @RequestParam String password) {
+
+        logger.log(Level.INFO, "Logging user");
+
+        securityService.login(username, password);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

@@ -1,11 +1,13 @@
 package com.project.donate.core.models;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "project")
@@ -17,6 +19,8 @@ public class Project {
 
     private String name;
 
+    @Column(length = 4096)
+    @Size(max = 4096)
     private String summary;
 
     private String dataType;
