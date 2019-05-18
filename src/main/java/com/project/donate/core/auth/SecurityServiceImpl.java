@@ -39,13 +39,16 @@ public class SecurityServiceImpl implements SecurityService {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         return userDetails.getUsername();
+    }
 
+    public UserDetails getCurrentLoggedUser(){
+        return (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     @Override
     public Authentication login(String username, String password) {
 
-        logger.log(Level.INFO, "Auto login started...");
+        logger.log(Level.INFO, "Login started...");
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
@@ -61,7 +64,7 @@ public class SecurityServiceImpl implements SecurityService {
 
         if (authenticate != null && authenticate.isAuthenticated()) {
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-            logger.log(Level.INFO, "Auto login successful");
+            logger.log(Level.INFO, "Login successful");
         }
 
         return authenticate;

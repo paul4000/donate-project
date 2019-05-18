@@ -1,6 +1,7 @@
 package com.project.donate.core.controllers;
 
 import com.project.donate.core.auth.SecurityService;
+import com.project.donate.core.auth.SecurityServiceImpl;
 import com.project.donate.core.auth.UserService;
 import com.project.donate.core.exceptions.DuplicateUserException;
 import com.project.donate.core.exceptions.WalletCreationException;
@@ -14,6 +15,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,10 +42,10 @@ public class UsersController {
 
     private final AccountsService accountsService;
 
-    private final SecurityService securityService;
+    private final SecurityServiceImpl securityService;
 
     @Autowired
-    public UsersController(UserService userService, AccountsService accountsService, SecurityService securityService) {
+    public UsersController(UserService userService, AccountsService accountsService, SecurityServiceImpl securityService) {
         this.securityService = securityService;
 
         Assert.notNull(userService, "UserService should not be null");
@@ -105,9 +108,21 @@ public class UsersController {
 
         logger.log(Level.INFO, "Logging user");
 
-        securityService.login(username, password);
+        Authentication login = securityService.login(username, password);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(login.getPrincipal(), HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/currentUser")
+    public ResponseEntity getCurrentLoggedInUser() {
+
+        UserDetails currentLoggedUser = securityService.getCurrentLoggedUser();
+
+        if(currentLoggedUser != null)
+        {
+            return new ResponseEntity<>(currentLoggedUser, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 }
