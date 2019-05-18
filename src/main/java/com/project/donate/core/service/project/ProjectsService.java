@@ -11,7 +11,7 @@ import com.project.donate.core.helpers.ProjectContractTypesConverter;
 import com.project.donate.core.helpers.ProjectHasher;
 import com.project.donate.core.helpers.PropertiesUtils;
 import com.project.donate.core.helpers.WalletHelper;
-import com.project.donate.core.models.Project;
+import com.project.donate.core.model.Project;
 import com.project.donate.core.repositories.ProjectRepository;
 import org.apache.commons.codec.DecoderException;
 import org.apache.log4j.Logger;

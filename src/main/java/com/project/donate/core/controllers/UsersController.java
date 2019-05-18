@@ -1,21 +1,20 @@
 package com.project.donate.core.controllers;
 
-import com.project.donate.core.auth.SecurityService;
 import com.project.donate.core.auth.SecurityServiceImpl;
 import com.project.donate.core.auth.UserService;
 import com.project.donate.core.exceptions.DuplicateUserException;
 import com.project.donate.core.exceptions.WalletCreationException;
 import com.project.donate.core.helpers.WalletHelper;
-import com.project.donate.core.models.Role;
-import com.project.donate.core.models.User;
-import com.project.donate.core.models.dtos.UserTO;
+import com.project.donate.core.model.Role;
+import com.project.donate.core.model.User;
+import com.project.donate.core.model.dtos.UserTO;
+import com.project.donate.core.model.response.AuthorizationTokenRS;
 import com.project.donate.core.service.accounts.AccountsService;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -98,9 +97,9 @@ public class UsersController {
 
         User savedUser = userService.saveUser(userToAdd);
 
-        securityService.login(savedUser.getUsername(), userTO.getPassword());
+        String token = securityService.loginUser(savedUser.getUsername(), userTO.getPassword());
 
-        return new ResponseEntity<>(savedUser, HttpStatus.OK);
+        return new ResponseEntity<>(new AuthorizationTokenRS(token), HttpStatus.OK);
     }
 
     @GetMapping(path = "/login")
@@ -108,9 +107,9 @@ public class UsersController {
 
         logger.log(Level.INFO, "Logging user");
 
-        Authentication login = securityService.login(username, password);
+        String token = securityService.loginUser(username, password);
 
-        return new ResponseEntity<>(login.getPrincipal(), HttpStatus.OK);
+        return new ResponseEntity<>(new AuthorizationTokenRS(token), HttpStatus.OK);
     }
 
     @GetMapping(path = "/currentUser")

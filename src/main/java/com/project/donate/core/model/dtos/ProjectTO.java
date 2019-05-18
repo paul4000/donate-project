@@ -1,4 +1,4 @@
-package com.project.donate.core.models.dtos;
+package com.project.donate.core.model.dtos;
 
 import org.springframework.web.multipart.MultipartFile;
 

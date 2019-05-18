@@ -1,7 +1,6 @@
 package com.project.donate.core.controllers;
 
-import com.project.donate.core.models.Project;
-import com.project.donate.core.models.dtos.ProjectTO;
+import com.project.donate.core.model.Project;
 import com.project.donate.core.service.project.ProjectsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -9,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;

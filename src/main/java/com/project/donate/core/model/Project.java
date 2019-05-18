@@ -1,4 +1,4 @@
-package com.project.donate.core.models;
+package com.project.donate.core.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

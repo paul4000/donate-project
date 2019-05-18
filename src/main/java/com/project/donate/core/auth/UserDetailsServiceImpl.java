@@ -1,6 +1,6 @@
 package com.project.donate.core.auth;
 
-import com.project.donate.core.models.User;
+import com.project.donate.core.model.User;
 import com.project.donate.core.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;

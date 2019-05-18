@@ -1,5 +1,6 @@
 package com.project.donate.core.auth;
 
+import antlr.Token;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,17 +22,22 @@ public class SecurityServiceImpl implements SecurityService {
 
     private final UserDetailsService userDetailsService;
 
+    private final TokenProvider tokenProvider;
+
     private final Logger logger = Logger.getLogger(SecurityServiceImpl.class);
 
     @Autowired
     public SecurityServiceImpl(AuthenticationManager authenticationManager,
-                               @Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService) {
+                               @Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService,
+                               TokenProvider tokenProvider) {
 
         Assert.notNull(authenticationManager, "AuthenticationManager should not be null");
         Assert.notNull(userDetailsService, "UserDetailsService should not be null");
+        Assert.notNull(tokenProvider, "TokenProvider should not be null");
 
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
+        this.tokenProvider = tokenProvider;
     }
 
     @Override
@@ -46,7 +52,7 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     @Override
-    public Authentication login(String username, String password) {
+    public String loginUser(String username, String password) {
 
         logger.log(Level.INFO, "Login started...");
 
@@ -67,7 +73,9 @@ public class SecurityServiceImpl implements SecurityService {
             logger.log(Level.INFO, "Login successful");
         }
 
-        return authenticate;
+        String jwt = tokenProvider.generateToken(authenticate);
+
+        return jwt;
     }
 
 
