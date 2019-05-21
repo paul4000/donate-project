@@ -1,5 +1,6 @@
 package com.project.donate.core.auth;
 
+import com.project.donate.core.model.Project;
 import com.project.donate.core.model.User;
 import com.project.donate.core.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +27,20 @@ public class UserService {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    public User saveUser(User user){
+    public User saveNewUser(User user){
 
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 
         return usersRepository.save(user);
+
+    }
+
+    public User addProjectToUser(String username, Project project){
+
+        User byUsername = usersRepository.findByUsername(username);
+        byUsername.getProjects().add(project);
+
+        return usersRepository.save(byUsername);
 
     }
 

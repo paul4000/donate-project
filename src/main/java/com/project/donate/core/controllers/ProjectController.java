@@ -35,7 +35,7 @@ public class ProjectController {
 
         if (project.isEmpty()) return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
 
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<>(project.get(), HttpStatus.OK);
     }
 
     @GetMapping(path = "/register")

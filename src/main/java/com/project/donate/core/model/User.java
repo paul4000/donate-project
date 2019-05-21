@@ -1,13 +1,18 @@
 package com.project.donate.core.model;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Table;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -36,6 +41,10 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @ElementCollection(targetClass = Project.class)
+    @JoinTable(name = "projects")
+    @JoinColumn(name = "project_id", referencedColumnName = "id")
+    private Set<Project> projects;
 
     public User() {
     }
@@ -103,5 +112,13 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public Set<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(Set<Project> projects) {
+        this.projects = projects;
     }
 }

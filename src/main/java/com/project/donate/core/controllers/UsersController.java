@@ -95,7 +95,7 @@ public class UsersController {
         userToAdd.setWalletFile(walletFileName.get());
         userToAdd.setRole(Role.valueOf(userTO.getAccountRole()));
 
-        User savedUser = userService.saveUser(userToAdd);
+        User savedUser = userService.saveNewUser(userToAdd);
 
         String token = securityService.loginUser(savedUser.getUsername(), userTO.getPassword());
 

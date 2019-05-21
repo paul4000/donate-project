@@ -64,7 +64,11 @@ public class ProjectsService {
             project.setSummary(summary);
             project.setData(projectFile.getBytes());
 
+            String loggedInUsername = securityService.findLoggedInUsername();
+
             savedProject = Optional.of(projectRepository.save(project));
+
+            savedProject.ifPresent(project1 -> userService.addProjectToUser(loggedInUsername, project1));
 
         } catch (IOException ex) {
             logger.warn("Can't extract bytes from project file.");
