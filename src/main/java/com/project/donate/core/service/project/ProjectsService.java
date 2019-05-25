@@ -1,5 +1,6 @@
 package com.project.donate.core.service.project;
 
+import com.google.common.collect.Lists;
 import com.project.donate.core.Web3jServiceSupplier;
 import com.project.donate.core.auth.SecurityService;
 import com.project.donate.core.auth.UserService;
@@ -24,6 +25,8 @@ import org.web3j.tx.exceptions.ContractCallException;
 import org.web3j.tx.gas.DefaultGasProvider;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -127,5 +130,9 @@ public class ProjectsService {
 
     public void openProject(String passwordToWallet, long projectId) {
 
+    }
+
+    public List<Project> getAllProjects(){
+        return Lists.newArrayList(projectRepository.findAll());
     }
 }
