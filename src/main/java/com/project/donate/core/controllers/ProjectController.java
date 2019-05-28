@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -77,6 +78,7 @@ public class ProjectController {
         return ResponseEntity.ok(projectRS);
     }
 
+    @CrossOrigin(value = {"*"}, exposedHeaders = {"Content-Disposition"})
     @GetMapping(path = "/download/details/{id}")
     public ResponseEntity<byte[]> downloadProjectPdf(@PathVariable long id) {
 
@@ -85,7 +87,7 @@ public class ProjectController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.valueOf(project.getDataType()));
         headers.setContentLength(project.getData().length);
-        headers.set("Content-Disposition", "attachment; filename=" + String.valueOf(id) + "_project_details.pdf");
+        headers.set("Content-Disposition", "attachment; filename=" + id + "_project_details.pdf");
 
         return new ResponseEntity<>(project.getData(), headers, HttpStatus.OK);
     }

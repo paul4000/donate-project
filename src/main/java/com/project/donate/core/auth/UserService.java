@@ -38,7 +38,7 @@ public class UserService {
     public User addProjectToUser(String username, Project project){
 
         User byUsername = usersRepository.findByUsername(username);
-        byUsername.getProjects().add(project);
+        byUsername.addProject(project);
 
         return usersRepository.save(byUsername);
 

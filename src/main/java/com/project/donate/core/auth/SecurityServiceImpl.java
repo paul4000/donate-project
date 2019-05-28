@@ -61,21 +61,14 @@ public class SecurityServiceImpl implements SecurityService {
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                 new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
 
-        Authentication authenticate = null;
-        try {
-            authenticate = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
-        } catch (BadCredentialsException e){
-            logger.log(Level.INFO, "Bad credentials");
-        }
+        Authentication authenticate = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
 
         if (authenticate != null && authenticate.isAuthenticated()) {
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             logger.log(Level.INFO, "Login successful");
         }
 
-        String jwt = tokenProvider.generateToken(authenticate);
-
-        return jwt;
+        return tokenProvider.generateToken(authenticate);
     }
 
 

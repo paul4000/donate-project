@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -97,7 +98,13 @@ public class UsersController {
 
         User savedUser = userService.saveNewUser(userToAdd);
 
-        String token = securityService.loginUser(savedUser.getUsername(), userTO.getPassword());
+        String token;
+        try {
+            token = securityService.loginUser(savedUser.getUsername(), userTO.getPassword());
+
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.badRequest().build();
+        }
 
         return new ResponseEntity<>(new AuthorizationTokenRS(token), HttpStatus.OK);
     }
@@ -107,7 +114,13 @@ public class UsersController {
 
         logger.log(Level.INFO, "Logging user");
 
-        String token = securityService.loginUser(username, password);
+        String token;
+
+        try {
+            token = securityService.loginUser(username, password);
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.badRequest().build();
+        }
 
         return new ResponseEntity<>(new AuthorizationTokenRS(token), HttpStatus.OK);
     }
@@ -117,8 +130,7 @@ public class UsersController {
 
         UserDetails currentLoggedUser = securityService.getCurrentLoggedUser();
 
-        if(currentLoggedUser != null)
-        {
+        if (currentLoggedUser != null) {
             return new ResponseEntity<>(currentLoggedUser, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
