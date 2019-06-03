@@ -1,12 +1,10 @@
 package com.project.donate.core.auth;
 
-import antlr.Token;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -47,7 +45,7 @@ public class SecurityServiceImpl implements SecurityService {
         return userDetails.getUsername();
     }
 
-    public UserDetails getCurrentLoggedUser(){
+    public UserDetails getCurrentLoggedUser() {
         return (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 

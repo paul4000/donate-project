@@ -8,11 +8,13 @@ import com.project.donate.core.blockchain.ProjectHashStore;
 import com.project.donate.core.exceptions.ProjectRetrievalException;
 import com.project.donate.core.exceptions.blockchain.ContractAddressNotFoundException;
 import com.project.donate.core.exceptions.blockchain.ConvertProjectDataException;
+import com.project.donate.core.exceptions.blockchain.OpeningProjectException;
 import com.project.donate.core.helpers.ProjectContractTypesConverter;
 import com.project.donate.core.helpers.ProjectHasher;
 import com.project.donate.core.helpers.PropertiesUtils;
 import com.project.donate.core.helpers.WalletHelper;
 import com.project.donate.core.model.Project;
+import com.project.donate.core.model.User;
 import com.project.donate.core.repositories.ProjectRepository;
 import org.apache.commons.codec.DecoderException;
 import org.apache.log4j.Logger;
@@ -21,13 +23,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 import org.web3j.crypto.Credentials;
+import org.web3j.protocol.core.RemoteCall;
 import org.web3j.tx.exceptions.ContractCallException;
 import org.web3j.tx.gas.DefaultGasProvider;
+import org.web3j.utils.Convert;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ProjectsService {
@@ -99,7 +106,6 @@ public class ProjectsService {
         String hashedProject = ProjectHasher.hashProject(project.getData());
 
         addToContract(userWalletCredentials, hashedProject, projectId);
-
     }
 
     private void addToContract(Credentials userWalletCredentials, String hashedProject, long projectId) {
@@ -117,7 +123,6 @@ public class ProjectsService {
 
             projectHashStore.registerProject(idBytes, projectBytes).send();
 
-
         } catch (DecoderException e) {
             e.printStackTrace();
             throw new ConvertProjectDataException();
@@ -128,11 +133,46 @@ public class ProjectsService {
 
     }
 
-    public void openProject(String passwordToWallet, long projectId) {
+    public Optional<String> openProject(String passwordToWallet, long projectId, String goal) {
 
+        String loggedInUsername = securityService.findLoggedInUsername();
+        User userFromDatabase = userService.getUserFromDatabase(loggedInUsername);
+        String walletFile = userFromDatabase.getWalletFile();
+
+        BigDecimal goalWei = Convert.toWei(goal, Convert.Unit.ETHER);
+
+        Credentials userWalletCredentials = WalletHelper.getCredentialsFromWallet(passwordToWallet, walletFile);
+
+        try {
+            com.project.donate.core.blockchain.Project project = com.project.donate.core.blockchain.Project.deploy(web3jServiceSupplier.getWeb3j(), userWalletCredentials,
+                    new DefaultGasProvider(), String.valueOf(projectId),
+                    goalWei.toBigInteger()).send();
+
+            Optional<Project> byId = projectRepository.findById(projectId);
+
+            byId.ifPresent(p -> {
+                p.setAddress(project.getContractAddress());
+                projectRepository.save(p);
+            });
+
+            return Optional.of(project.getContractAddress());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new OpeningProjectException();
+        }
     }
 
     public List<Project> getAllProjects(){
         return Lists.newArrayList(projectRepository.findAll());
+    }
+
+    public List<Project> getUserProject(String username) {
+
+        User userFromDatabase = userService.getUserFromDatabase(username);
+
+        Set<Project> projects = userFromDatabase.getProjects();
+
+        return Lists.newArrayList(projects);
     }
 }

@@ -27,7 +27,7 @@ public class UserService {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    public User saveNewUser(User user){
+    public User saveNewUser(User user) {
 
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 
@@ -35,7 +35,7 @@ public class UserService {
 
     }
 
-    public User addProjectToUser(String username, Project project){
+    public User addProjectToUser(String username, Project project) {
 
         User byUsername = usersRepository.findByUsername(username);
         byUsername.addProject(project);
@@ -55,5 +55,11 @@ public class UserService {
         User byUsername = usersRepository.findByUsernameOrEmail(username, email);
 
         return Optional.ofNullable(byUsername).isPresent();
+    }
+
+    public User getUserFromDatabase(String username) {
+        User byUsername = usersRepository.findByUsername(username);
+
+        return byUsername;
     }
 }

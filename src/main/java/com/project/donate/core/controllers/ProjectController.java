@@ -1,5 +1,6 @@
 package com.project.donate.core.controllers;
 
+import com.project.donate.core.auth.SecurityServiceImpl;
 import com.project.donate.core.model.Project;
 import com.project.donate.core.model.response.ProjectRS;
 import com.project.donate.core.service.project.ProjectsService;
@@ -25,11 +26,14 @@ import java.util.Optional;
 public class ProjectController {
 
     private ProjectsService projectsService;
+    private SecurityServiceImpl securityService;
 
-    public ProjectController(ProjectsService projectsService) {
+    public ProjectController(ProjectsService projectsService, SecurityServiceImpl securityService) {
 
         Assert.notNull(projectsService, "ProjectsService should not be null");
+        Assert.notNull(securityService, "SecurityServiceImpl should not be null");
         this.projectsService = projectsService;
+        this.securityService = securityService;
     }
 
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -49,12 +53,11 @@ public class ProjectController {
         projectsService.registerInBlockchain(passwordToWallet, projectId);
 
         return ResponseEntity.ok().build();
-
     }
 
     @GetMapping(path = "/open")
-    public ResponseEntity openProject(@RequestParam String passwordToWallet, @RequestParam long projectId) {
-        projectsService.openProject(passwordToWallet, projectId);
+    public ResponseEntity openProject(@RequestParam String passwordToWallet, @RequestParam long projectId, @RequestParam String amount) {
+        projectsService.openProject(passwordToWallet, projectId, amount);
         return null;
     }
 
@@ -90,6 +93,22 @@ public class ProjectController {
         headers.set("Content-Disposition", "attachment; filename=" + id + "_project_details.pdf");
 
         return new ResponseEntity<>(project.getData(), headers, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/my")
+    public ResponseEntity getMyProjects() {
+
+        String loggedInUsername = securityService.findLoggedInUsername();
+
+        List<Project> allProjects = projectsService.getUserProject(loggedInUsername);
+
+        return ResponseEntity.ok(allProjects);
+    }
+
+    @GetMapping(path = "/donated/{username}")
+    public ResponseEntity getDonatedProjects(@PathVariable String username) {
+
+        return ResponseEntity.notFound().build();
     }
 
 }
