@@ -2,6 +2,7 @@ package com.project.donate.core.controllers;
 
 import com.project.donate.core.auth.SecurityServiceImpl;
 import com.project.donate.core.model.Project;
+import com.project.donate.core.model.response.OpenedProjectRS;
 import com.project.donate.core.model.response.ProjectRS;
 import com.project.donate.core.service.project.ProjectsService;
 import org.springframework.http.HttpHeaders;
@@ -47,7 +48,7 @@ public class ProjectController {
         return new ResponseEntity<>(project.get(), HttpStatus.OK);
     }
 
-    @GetMapping(path = "/register")
+    @PostMapping(path = "/register")
     public ResponseEntity registerInBlockchain(@RequestParam String passwordToWallet, @RequestParam long projectId) {
 
         projectsService.registerInBlockchain(passwordToWallet, projectId);
@@ -55,10 +56,16 @@ public class ProjectController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping(path = "/open")
+    @PostMapping(path = "/open")
     public ResponseEntity openProject(@RequestParam String passwordToWallet, @RequestParam long projectId, @RequestParam String amount) {
-        projectsService.openProject(passwordToWallet, projectId, amount);
-        return null;
+        String openProjectAddress = projectsService.openProject(passwordToWallet, projectId, amount);
+
+        projectsService.registerInBlockchain(passwordToWallet, projectId);
+
+        OpenedProjectRS projectRS = new OpenedProjectRS();
+        projectRS.setProjectAddress(openProjectAddress);
+
+        return ResponseEntity.ok(projectRS);
     }
 
     @GetMapping(path = "/all")
@@ -77,6 +84,8 @@ public class ProjectController {
         projectRS.setId(project.getId());
         projectRS.setName(project.getName());
         projectRS.setSummary(project.getSummary());
+        projectRS.setOpened(project.isOpened());
+        projectRS.setAddress(project.getAddress());
 
         return ResponseEntity.ok(projectRS);
     }

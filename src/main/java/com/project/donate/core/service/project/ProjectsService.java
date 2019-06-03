@@ -23,15 +23,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 import org.web3j.crypto.Credentials;
-import org.web3j.protocol.core.RemoteCall;
 import org.web3j.tx.exceptions.ContractCallException;
 import org.web3j.tx.gas.DefaultGasProvider;
 import org.web3j.utils.Convert;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -93,7 +90,7 @@ public class ProjectsService {
                 .orElseThrow(ProjectRetrievalException::new);
     }
 
-    public void registerInBlockchain(String passwordToWallet, long projectId){
+    public void registerInBlockchain(String passwordToWallet, long projectId) {
 
         Project project = getProject(projectId);
 
@@ -112,7 +109,7 @@ public class ProjectsService {
 
         Optional<String> contractAddress = PropertiesUtils.getPropertyFromConfig(PROJECT_ADDRESS_PROPERTY);
 
-        if(contractAddress.isEmpty()) throw new ContractAddressNotFoundException();
+        if (contractAddress.isEmpty()) throw new ContractAddressNotFoundException();
 
         ProjectHashStore projectHashStore = ProjectHashStore.load(contractAddress.get(), web3jServiceSupplier.getWeb3j(),
                 userWalletCredentials, new DefaultGasProvider());
@@ -133,7 +130,7 @@ public class ProjectsService {
 
     }
 
-    public Optional<String> openProject(String passwordToWallet, long projectId, String goal) {
+    public String openProject(String passwordToWallet, long projectId, String goal) {
 
         String loggedInUsername = securityService.findLoggedInUsername();
         User userFromDatabase = userService.getUserFromDatabase(loggedInUsername);
@@ -148,14 +145,12 @@ public class ProjectsService {
                     new DefaultGasProvider(), String.valueOf(projectId),
                     goalWei.toBigInteger()).send();
 
-            Optional<Project> byId = projectRepository.findById(projectId);
+            Project byId = getProject(projectId);
 
-            byId.ifPresent(p -> {
-                p.setAddress(project.getContractAddress());
-                projectRepository.save(p);
-            });
+            byId.setAddress(project.getContractAddress());
+            projectRepository.save(byId);
 
-            return Optional.of(project.getContractAddress());
+            return project.getContractAddress();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -163,7 +158,7 @@ public class ProjectsService {
         }
     }
 
-    public List<Project> getAllProjects(){
+    public List<Project> getAllProjects() {
         return Lists.newArrayList(projectRepository.findAll());
     }
 

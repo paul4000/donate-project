@@ -6,6 +6,26 @@ public class ProjectRS {
     String name;
     String summary;
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    String address;
+
+    public Boolean getOpened() {
+        return isOpened;
+    }
+
+    public void setOpened(Boolean opened) {
+        isOpened = opened;
+    }
+
+    Boolean isOpened;
+
     public long getId() {
         return id;
     }
