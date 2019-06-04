@@ -12,6 +12,8 @@ import org.web3j.crypto.WalletUtils;
 import java.io.IOException;
 import java.util.Optional;
 
+import static com.project.donate.core.helpers.PropertiesUtils.getPropertyFromConfig;
+
 public class WalletHelper {
 
     private final static Logger logger = Logger.getLogger(WalletHelper.class);
@@ -37,7 +39,11 @@ public class WalletHelper {
 
     public static Credentials getCredentialsFromWallet(String password, String walletAddress) {
 
-        String walletSource = WALLET_PATH + "\\" + walletAddress;
+        Optional<String> walletPath = getPropertyFromConfig(WALLET_PATH);
+
+        if(walletPath.isEmpty()) throw new WalletOpeningException();
+
+        String walletSource = walletPath.get() + "\\" + walletAddress;
 
         try {
 

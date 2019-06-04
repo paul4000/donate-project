@@ -2,6 +2,7 @@ package com.project.donate.core.controllers;
 
 import com.project.donate.core.auth.SecurityServiceImpl;
 import com.project.donate.core.model.Project;
+import com.project.donate.core.model.dtos.OpenProjectRQ;
 import com.project.donate.core.model.response.OpenedProjectRS;
 import com.project.donate.core.model.response.ProjectRS;
 import com.project.donate.core.service.project.ProjectsService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/project")
@@ -57,10 +60,10 @@ public class ProjectController {
     }
 
     @PostMapping(path = "/open")
-    public ResponseEntity openProject(@RequestParam String passwordToWallet, @RequestParam long projectId, @RequestParam String amount) {
-        String openProjectAddress = projectsService.openProject(passwordToWallet, projectId, amount);
+    public ResponseEntity openProject(@RequestBody OpenProjectRQ projectRQ) {
+        String openProjectAddress = projectsService.openProject(projectRQ.getPasswordToWallet(), projectRQ.getProjectId(), projectRQ.getAmount());
 
-        projectsService.registerInBlockchain(passwordToWallet, projectId);
+//        projectsService.registerInBlockchain(passwordToWallet, projectId);
 
         OpenedProjectRS projectRS = new OpenedProjectRS();
         projectRS.setProjectAddress(openProjectAddress);
@@ -111,7 +114,19 @@ public class ProjectController {
 
         List<Project> allProjects = projectsService.getUserProject(loggedInUsername);
 
-        return ResponseEntity.ok(allProjects);
+        List<ProjectRS> projectsRS = allProjects.stream()
+                .map(p -> {
+                    ProjectRS projectRS = new ProjectRS();
+                    projectRS.setId(p.getId());
+                    projectRS.setName(p.getName());
+                    projectRS.setSummary(p.getSummary());
+                    projectRS.setAddress(p.getAddress());
+                    projectRS.setOpened(p.isOpened());
+                    return projectRS;
+                })
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(projectsRS);
     }
 
     @GetMapping(path = "/donated/{username}")
