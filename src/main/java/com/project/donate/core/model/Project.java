@@ -1,5 +1,7 @@
 package com.project.donate.core.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,6 +16,7 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "project")
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 public class Project {
 
     @Id

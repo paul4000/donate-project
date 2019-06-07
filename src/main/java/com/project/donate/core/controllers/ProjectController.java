@@ -5,6 +5,7 @@ import com.project.donate.core.model.Project;
 import com.project.donate.core.model.dtos.OpenProjectRQ;
 import com.project.donate.core.model.response.OpenedProjectRS;
 import com.project.donate.core.model.response.ProjectRS;
+import com.project.donate.core.service.project.HandlingProjectService;
 import com.project.donate.core.service.project.ProjectsService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -31,13 +32,16 @@ public class ProjectController {
 
     private ProjectsService projectsService;
     private SecurityServiceImpl securityService;
+    private HandlingProjectService handlingProjectService;
 
-    public ProjectController(ProjectsService projectsService, SecurityServiceImpl securityService) {
+    public ProjectController(ProjectsService projectsService, SecurityServiceImpl securityService, HandlingProjectService handlingProjectService) {
 
         Assert.notNull(projectsService, "ProjectsService should not be null");
         Assert.notNull(securityService, "SecurityServiceImpl should not be null");
+        Assert.notNull(securityService, "HandlingProjectService should not be null");
         this.projectsService = projectsService;
         this.securityService = securityService;
+        this.handlingProjectService = handlingProjectService;
     }
 
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -54,14 +58,14 @@ public class ProjectController {
     @PostMapping(path = "/register")
     public ResponseEntity registerInBlockchain(@RequestParam String passwordToWallet, @RequestParam long projectId) {
 
-        projectsService.registerInBlockchain(passwordToWallet, projectId);
+        handlingProjectService.registerInBlockchain(passwordToWallet, projectId);
 
         return ResponseEntity.ok().build();
     }
 
     @PostMapping(path = "/open")
     public ResponseEntity openProject(@RequestBody OpenProjectRQ projectRQ) {
-        String openProjectAddress = projectsService.openProject(projectRQ.getPasswordToWallet(), projectRQ.getProjectId(), projectRQ.getAmount());
+        String openProjectAddress = handlingProjectService.openProject(projectRQ.getPasswordToWallet(), projectRQ.getProjectId(), projectRQ.getAmount());
 
 //        projectsService.registerInBlockchain(passwordToWallet, projectId);
 
@@ -76,7 +80,7 @@ public class ProjectController {
 
         List<Project> allProjects = projectsService.getAllProjects();
 
-        return ResponseEntity.ok(allProjects);
+        return mapProjects(allProjects);
     }
 
     @GetMapping(path = "/detalis/{id}")
@@ -114,6 +118,17 @@ public class ProjectController {
 
         List<Project> allProjects = projectsService.getUserProject(loggedInUsername);
 
+        return mapProjects(allProjects);
+    }
+
+    @GetMapping(path = "/donated/{username}")
+    public ResponseEntity getDonatedProjects(@PathVariable String username) {
+
+        return ResponseEntity.notFound().build();
+    }
+
+
+    private ResponseEntity mapProjects(List<Project> allProjects) {
         List<ProjectRS> projectsRS = allProjects.stream()
                 .map(p -> {
                     ProjectRS projectRS = new ProjectRS();
@@ -127,12 +142,6 @@ public class ProjectController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(projectsRS);
-    }
-
-    @GetMapping(path = "/donated/{username}")
-    public ResponseEntity getDonatedProjects(@PathVariable String username) {
-
-        return ResponseEntity.notFound().build();
     }
 
 }

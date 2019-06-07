@@ -2,7 +2,6 @@ package com.project.donate.core.helpers;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
-import com.project.donate.core.exceptions.WalletCreationException;
 import com.project.donate.core.exceptions.WalletOpeningException;
 import org.apache.log4j.Logger;
 import org.web3j.crypto.CipherException;
