@@ -32,6 +32,8 @@ public class Project {
     private String dataType;
 
     private boolean isOpened;
+    private boolean isValidationPhase;
+    private Boolean executedWithSuccess;
 
     @Lob
     private byte[] data;
@@ -104,5 +106,21 @@ public class Project {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public boolean isValidationPhase() {
+        return isValidationPhase;
+    }
+
+    public void setValidationPhase(boolean validationPhase) {
+        isValidationPhase = validationPhase;
+    }
+
+    public Boolean getExecutedWithSuccess() {
+        return executedWithSuccess;
+    }
+
+    public void setExecutedWithSuccess(Boolean executedWithSuccess) {
+        this.executedWithSuccess = executedWithSuccess;
     }
 }

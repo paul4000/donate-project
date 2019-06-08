@@ -88,4 +88,16 @@ public class ProjectsService {
 
         return Lists.newArrayList(projects);
     }
+
+    public void changeValidationPhase(long projectId, boolean value) {
+        Project project = getProject(projectId);
+        project.setValidationPhase(value);
+        projectRepository.save(project);
+    }
+
+    public void changeOpenedStatus(long projectId, boolean value) {
+        Project project = getProject(projectId);
+        project.setOpened(value);
+        projectRepository.save(project);
+    }
 }
