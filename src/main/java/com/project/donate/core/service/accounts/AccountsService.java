@@ -12,7 +12,6 @@ import org.springframework.util.Assert;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.WalletUtils;
 
-import javax.persistence.Access;
 import java.io.File;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;

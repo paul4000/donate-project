@@ -138,10 +138,10 @@ public class HandlingProjectService extends AbstractProjectService {
         Credentials userWalletCredentials = getCredentials(passwordToWallet);
         com.project.donate.core.blockchain.Project projectFromBlockchain = loadProjectFromBlockchain(projectId, userWalletCredentials);
 
-        getProjectsService().changeValidationPhase(projectId, true);
 
         try {
             TransactionReceipt transactionReceipt = projectFromBlockchain.openValidationPhase().send();
+            getProjectsService().changeValidationPhase(projectId, true);
 
             logger.info(transactionReceipt.toString());
 
