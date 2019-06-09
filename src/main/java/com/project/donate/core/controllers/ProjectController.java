@@ -142,6 +142,11 @@ public class ProjectController {
         return ResponseEntity.notFound().build();
     }
 
+//    @PostMapping(path = "/close/{id}")
+//    public ResponseEntity closeProject(@PathVariable long projectId) {
+//
+//    }
+
 
 
     private ResponseEntity mapProjects(List<Project> allProjects) {

@@ -9,6 +9,7 @@ import com.project.donate.core.model.Role;
 import com.project.donate.core.model.User;
 import com.project.donate.core.model.dtos.UserTO;
 import com.project.donate.core.model.response.AuthorizationTokenRS;
+import com.project.donate.core.model.response.ExecutorRS;
 import com.project.donate.core.service.accounts.AccountsService;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -30,7 +31,9 @@ import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/users")
@@ -134,6 +137,22 @@ public class UsersController {
             return new ResponseEntity<>(currentLoggedUser, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping(path = "/executors")
+    public ResponseEntity getExecutorsList(){
+        List<ExecutorRS> executorRSList = userService.getAllExecutors().stream()
+                .map(this::mapExecutor)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(executorRSList);
+    }
+
+    private ExecutorRS mapExecutor(User user) {
+        ExecutorRS executorRS = new ExecutorRS();
+        executorRS.setName(user.getName());
+        executorRS.setAddress(user.getAccount());
+        return executorRS;
     }
 
 }
