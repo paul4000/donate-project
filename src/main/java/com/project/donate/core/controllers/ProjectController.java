@@ -2,10 +2,12 @@ package com.project.donate.core.controllers;
 
 import com.project.donate.core.auth.SecurityServiceImpl;
 import com.project.donate.core.model.Project;
+import com.project.donate.core.model.dtos.DonationTO;
 import com.project.donate.core.model.dtos.OpenProjectRQ;
 import com.project.donate.core.model.response.OpenedProjectRS;
 import com.project.donate.core.model.response.ProjectRS;
 import com.project.donate.core.service.project.HandlingProjectService;
+import com.project.donate.core.service.project.ProjectInfoService;
 import com.project.donate.core.service.project.ProjectsService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -33,15 +35,19 @@ public class ProjectController {
     private ProjectsService projectsService;
     private SecurityServiceImpl securityService;
     private HandlingProjectService handlingProjectService;
+    private ProjectInfoService projectInfoService;
 
-    public ProjectController(ProjectsService projectsService, SecurityServiceImpl securityService, HandlingProjectService handlingProjectService) {
+    public ProjectController(ProjectsService projectsService, SecurityServiceImpl securityService, HandlingProjectService handlingProjectService,
+                             ProjectInfoService projectInfoService) {
 
         Assert.notNull(projectsService, "ProjectsService should not be null");
         Assert.notNull(securityService, "SecurityServiceImpl should not be null");
         Assert.notNull(securityService, "HandlingProjectService should not be null");
+        Assert.notNull(projectInfoService, "ProjectInfoService should not be null");
         this.projectsService = projectsService;
         this.securityService = securityService;
         this.handlingProjectService = handlingProjectService;
+        this.projectInfoService = projectInfoService;
     }
 
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -92,7 +98,16 @@ public class ProjectController {
         projectRS.setName(project.getName());
         projectRS.setSummary(project.getSummary());
         projectRS.setOpened(project.isOpened());
-        projectRS.setAddress(project.getAddress());
+
+        if (project.isOpened()) {
+
+            projectRS.setAddress(project.getAddress());
+            projectRS.setValidationPhase(project.isValidationPhase());
+            projectRS.setIfProjectSuccessful(project.getExecutedWithSuccess());
+            projectRS.setGoalAmount(projectInfoService.getProjectContractGoalAmount(id));
+            projectRS.setActualBalance(projectInfoService.getProjectCurrentBalance(id));
+
+        }
 
         return ResponseEntity.ok(projectRS);
     }
@@ -126,6 +141,7 @@ public class ProjectController {
 
         return ResponseEntity.notFound().build();
     }
+
 
 
     private ResponseEntity mapProjects(List<Project> allProjects) {

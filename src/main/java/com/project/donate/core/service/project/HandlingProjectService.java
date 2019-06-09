@@ -170,15 +170,14 @@ public class HandlingProjectService extends AbstractProjectService {
 
             getProjectsService().changeOpenedStatus(projectId, false);
 
-            // todo: set if execution is success
+            Boolean projectExecutionResult = projectFromBlockchain.getIfProjectExecutionSuccess().send();
+            getProjectsService().changeExecutionStatus(projectId, projectExecutionResult);
 
-            return false;
+            return projectExecutionResult;
 
         } catch (Exception e) {
             e.printStackTrace();
             throw new HandlingProjectException("Error while executing project");
         }
-
-
     }
 }

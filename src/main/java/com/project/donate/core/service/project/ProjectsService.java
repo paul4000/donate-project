@@ -100,4 +100,10 @@ public class ProjectsService {
         project.setOpened(value);
         projectRepository.save(project);
     }
+
+    public void changeExecutionStatus(long projectId, boolean value) {
+        Project project = getProject(projectId);
+        project.setExecutedWithSuccess(value);
+        projectRepository.save(project);
+    }
 }

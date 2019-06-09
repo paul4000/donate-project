@@ -128,4 +128,13 @@ contract Project {
         return goalAmount;
     }
 
+    function getIfProjectExecutionSuccess() public view returns (bool result) {
+
+        require(executionPhase);
+        require(!validatingPhase);
+
+        return (forAgainstSum >= 0);
+
+    }
+
 }

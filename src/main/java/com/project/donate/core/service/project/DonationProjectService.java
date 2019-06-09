@@ -27,7 +27,7 @@ public class DonationProjectService extends AbstractProjectService {
 
     }
 
-    public void donateProject(String passForWallet, long projectId, int donationValue) {
+    public void donateProject(String passForWallet, long projectId, double donationValue) {
 
         Project projectFromDB = getProjectsService().getProject(projectId);
 
