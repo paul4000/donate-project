@@ -99,14 +99,19 @@ public class ProjectController {
         projectRS.setSummary(project.getSummary());
         projectRS.setOpened(project.isOpened());
 
-        if (project.isOpened()) {
+        if (project.getAddress() != null) {
 
             projectRS.setAddress(project.getAddress());
             projectRS.setValidationPhase(project.isValidationPhase());
             projectRS.setIfProjectSuccessful(project.getExecutedWithSuccess());
             projectRS.setGoalAmount(projectInfoService.getProjectContractGoalAmount(id));
             projectRS.setActualBalance(projectInfoService.getProjectCurrentBalance(id));
+        }
 
+        if(project.isValidationPhase()) {
+            projectRS.setCanUserVote(projectInfoService.canUserVote(id));
+            projectRS.setDonatorsNumber(projectInfoService.getDonatorsNumber(id));
+            projectRS.setNumberOfVotes(projectInfoService.getNumberOfVotes(id));
         }
 
         return ResponseEntity.ok(projectRS);
@@ -141,13 +146,6 @@ public class ProjectController {
 
         return ResponseEntity.notFound().build();
     }
-
-//    @PostMapping(path = "/close/{id}")
-//    public ResponseEntity closeProject(@PathVariable long projectId) {
-//
-//    }
-
-
 
     private ResponseEntity mapProjects(List<Project> allProjects) {
         List<ProjectRS> projectsRS = allProjects.stream()

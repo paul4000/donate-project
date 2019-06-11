@@ -4,6 +4,7 @@ import com.project.donate.core.model.dtos.DonationTO;
 import com.project.donate.core.model.dtos.ExecutorsDTO;
 import com.project.donate.core.model.response.DonateRS;
 import com.project.donate.core.model.response.OpenValidationRS;
+import com.project.donate.core.model.response.VotingRS;
 import com.project.donate.core.service.project.DonationProjectService;
 import com.project.donate.core.service.project.HandlingProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,16 @@ public class DonationController {
         openValidationRS.setProjectId(projectId);
 
         return ResponseEntity.ok(openValidationRS);
+    }
+
+    @PostMapping(path ="/vote/{projectId}")
+    public ResponseEntity voteForExecution(@PathVariable long projectId, @RequestParam int value, @RequestParam String walletPass) {
+        donationProjectService.voteForExecution(projectId, value, walletPass);
+
+        VotingRS votingRS = new VotingRS();
+        votingRS.setId(value);
+
+        return ResponseEntity.ok(votingRS);
     }
 
 }

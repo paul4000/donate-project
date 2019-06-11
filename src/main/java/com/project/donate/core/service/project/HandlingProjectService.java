@@ -142,6 +142,7 @@ public class HandlingProjectService extends AbstractProjectService {
         try {
             TransactionReceipt transactionReceipt = projectFromBlockchain.openValidationPhase().send();
             getProjectsService().changeValidationPhase(projectId, true);
+            getProjectsService().changeOpenedStatus(projectId, false);
 
             logger.info(transactionReceipt.toString());
 
@@ -167,8 +168,6 @@ public class HandlingProjectService extends AbstractProjectService {
 
             TransactionReceipt transactionReceiptExecution = projectFromBlockchain.executeProject().send();
             logger.info(transactionReceiptExecution.toString());
-
-            getProjectsService().changeOpenedStatus(projectId, false);
 
             Boolean projectExecutionResult = projectFromBlockchain.getIfProjectExecutionSuccess().send();
             getProjectsService().changeExecutionStatus(projectId, projectExecutionResult);

@@ -11,6 +11,9 @@ public class ProjectRS {
     private Boolean ifProjectSuccessful;
     private double goalAmount;
     private double actualBalance;
+    private Boolean canUserVote;
+    private int donatorsNumber;
+    private int numberOfVotes;
 
     public String getAddress() {
         return address;
@@ -82,5 +85,29 @@ public class ProjectRS {
 
     public void setActualBalance(double actualBalance) {
         this.actualBalance = actualBalance;
+    }
+
+    public Boolean getCanUserVote() {
+        return canUserVote;
+    }
+
+    public void setCanUserVote(Boolean canUserVote) {
+        this.canUserVote = canUserVote;
+    }
+
+    public int getDonatorsNumber() {
+        return donatorsNumber;
+    }
+
+    public void setDonatorsNumber(int donatorsNumber) {
+        this.donatorsNumber = donatorsNumber;
+    }
+
+    public int getNumberOfVotes() {
+        return numberOfVotes;
+    }
+
+    public void setNumberOfVotes(int numberOfVotes) {
+        this.numberOfVotes = numberOfVotes;
     }
 }

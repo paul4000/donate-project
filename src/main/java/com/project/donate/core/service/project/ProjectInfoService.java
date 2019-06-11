@@ -5,7 +5,9 @@ import com.project.donate.core.auth.SecurityService;
 import com.project.donate.core.auth.UserService;
 import com.project.donate.core.exceptions.WalletCreationException;
 import com.project.donate.core.exceptions.blockchain.HandlingProjectException;
+import com.project.donate.core.exceptions.blockchain.ProjectInfoException;
 import com.project.donate.core.model.Project;
+import com.project.donate.core.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.web3j.crypto.Credentials;
@@ -67,11 +69,60 @@ public class ProjectInfoService extends AbstractProjectService {
         }
     }
 
+    public boolean canUserVote(long projectId) {
+        try {
+            com.project.donate.core.blockchain.Project projectFromBlockchain = getProjectFromBlockchain(projectId);
+
+            String loggedInUsername = getSecurityService().findLoggedInUsername();
+            User userFromDatabase = getUserService().getUserFromDatabase(loggedInUsername);
+
+            BigInteger donation = projectFromBlockchain.donations(userFromDatabase.getAccount()).send();
+            BigInteger validation = projectFromBlockchain.validation(userFromDatabase.getAccount()).send();
+
+            return (donation.compareTo(BigInteger.ZERO) > 0) && validation.equals(BigInteger.ZERO);
+
+        } catch (InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchProviderException e) {
+            e.printStackTrace();
+            throw new WalletCreationException();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new HandlingProjectException("Error while getting project info");
+        }
+    }
+
     private com.project.donate.core.blockchain.Project getProjectFromBlockchain(long projectId) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
         Project project = getProjectsService().getProject(projectId);
         Credentials universalCredentials = Credentials.create(Keys.createEcKeyPair());
         return com.project.donate.core.blockchain.Project.load(project.getAddress(), getWeb3jServiceSupplier().getWeb3j(),
                 universalCredentials, new DefaultGasProvider());
+    }
+
+    public int getDonatorsNumber(long projectId) {
+        try{
+            com.project.donate.core.blockchain.Project projectFromBlockchain = getProjectFromBlockchain(projectId);
+            BigInteger number = projectFromBlockchain.getDonatorsCount().send();
+
+            return number.intValue();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            throw new ProjectInfoException();
+        }
+    }
+
+    public int getNumberOfVotes(long projectId) {
+        try{
+            com.project.donate.core.blockchain.Project projectFromBlockchain = getProjectFromBlockchain(projectId);
+            BigInteger votes = projectFromBlockchain.votesCount().send();
+
+            return votes.intValue();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            throw new ProjectInfoException();
+        }
     }
 
 }

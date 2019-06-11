@@ -18,7 +18,8 @@ contract Project {
     uint distributedFunds;
 
     mapping(address => int) public validation;
-    int forAgainstSum;
+    int public forAgainstSum;
+    int public votesCount;
 
     modifier initiatorAllowed() {
         require(msg.sender == initiator);
@@ -76,6 +77,7 @@ contract Project {
     function voteForProjectExecution(int value) public canVoteForProjectExecution returns (bool result) {
         validation[msg.sender] = value;
         forAgainstSum += value;
+        votesCount += 1;
         return true;
     }
 
@@ -90,7 +92,7 @@ contract Project {
         return true;
     }
 
-    function executeProject() public initiatorAllowed returns (bool ifDonted) {
+    function executeProject() public initiatorAllowed returns (bool ifDonated) {
 
         require(executionPhase);
 
@@ -104,7 +106,7 @@ contract Project {
 
             }
 
-            ifDonted = true;
+            ifDonated = true;
 
         } else {
 
@@ -116,7 +118,7 @@ contract Project {
 
             }
 
-            ifDonted = false;
+            ifDonated = false;
         }
     }
 
@@ -135,6 +137,14 @@ contract Project {
 
         return (forAgainstSum >= 0);
 
+    }
+
+    function getExecutors() public view returns (address[] memory  exec) {
+        return executorsAddresses;
+    }
+
+    function getDonatorsCount() public view returns (uint256 num) {
+        return donators.length;
     }
 
 }

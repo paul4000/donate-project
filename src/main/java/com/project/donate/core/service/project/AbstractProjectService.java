@@ -12,6 +12,7 @@ import org.web3j.tx.gas.DefaultGasProvider;
 abstract public class AbstractProjectService {
 
     private UserService userService;
+
     private SecurityService securityService;
     private ProjectsService projectsService;
     private Web3jServiceSupplier web3jServiceSupplier;
@@ -51,6 +52,14 @@ abstract public class AbstractProjectService {
 
     public Web3jServiceSupplier getWeb3jServiceSupplier() {
         return web3jServiceSupplier;
+    }
+
+    public UserService getUserService() {
+        return userService;
+    }
+
+    public SecurityService getSecurityService() {
+        return securityService;
     }
 
 }
