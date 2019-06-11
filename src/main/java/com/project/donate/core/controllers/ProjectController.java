@@ -88,9 +88,9 @@ public class ProjectController {
     }
 
     @PostMapping(path = "/close/{projectId}")
-    public ResponseEntity closeProject(@PathVariable long projectId, @RequestParam String wallPass) {
+    public ResponseEntity closeProject(@PathVariable long projectId, @RequestParam String walletPass) {
 
-        boolean result = handlingProjectService.executeAndCloseProject(wallPass, projectId);
+        boolean result = handlingProjectService.executeAndCloseProject(walletPass, projectId);
 
         ProjectExecutionRS projectExecutionRS = new ProjectExecutionRS();
         projectExecutionRS.setResult(result);
@@ -179,11 +179,14 @@ public class ProjectController {
 
     private ExecutorRS mapExecutor(String executorAddress) {
 
-        User userFromDatabase = userService.getUserFromDatabase(executorAddress);
+        User userFromDatabase = userService.getByAdress(executorAddress);
 
         ExecutorRS executorRS = new ExecutorRS();
-        executorRS.setName(userFromDatabase.getName());
-        executorRS.setAddress(userFromDatabase.getAccount());
+
+        if (userFromDatabase != null) {
+            executorRS.setName(userFromDatabase.getName());
+            executorRS.setAddress(userFromDatabase.getAccount());
+        }
         return executorRS;
     }
 

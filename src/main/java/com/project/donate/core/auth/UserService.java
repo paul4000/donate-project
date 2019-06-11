@@ -67,6 +67,11 @@ public class UserService {
         return byUsername;
     }
 
+    public User getByAdress(String address) {
+
+        return usersRepository.findByAccount(address);
+    }
+
     public List<User> getAllExecutors() {
         Iterable<User> all = usersRepository.findAll();
 
