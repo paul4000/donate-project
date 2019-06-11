@@ -1,9 +1,11 @@
 package com.project.donate.core.controllers;
 
 import com.project.donate.core.auth.SecurityServiceImpl;
+import com.project.donate.core.auth.UserService;
 import com.project.donate.core.model.Project;
-import com.project.donate.core.model.dtos.DonationTO;
+import com.project.donate.core.model.User;
 import com.project.donate.core.model.dtos.OpenProjectRQ;
+import com.project.donate.core.model.response.ExecutorRS;
 import com.project.donate.core.model.response.OpenedProjectRS;
 import com.project.donate.core.model.response.ProjectExecutionRS;
 import com.project.donate.core.model.response.ProjectRS;
@@ -37,18 +39,21 @@ public class ProjectController {
     private SecurityServiceImpl securityService;
     private HandlingProjectService handlingProjectService;
     private ProjectInfoService projectInfoService;
+    private UserService userService;
 
     public ProjectController(ProjectsService projectsService, SecurityServiceImpl securityService, HandlingProjectService handlingProjectService,
-                             ProjectInfoService projectInfoService) {
+                             ProjectInfoService projectInfoService, UserService userService) {
 
         Assert.notNull(projectsService, "ProjectsService should not be null");
         Assert.notNull(securityService, "SecurityServiceImpl should not be null");
         Assert.notNull(securityService, "HandlingProjectService should not be null");
         Assert.notNull(projectInfoService, "ProjectInfoService should not be null");
+        Assert.notNull(userService, "UserService should not be null");
         this.projectsService = projectsService;
         this.securityService = securityService;
         this.handlingProjectService = handlingProjectService;
         this.projectInfoService = projectInfoService;
+        this.userService = userService;
     }
 
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -150,6 +155,7 @@ public class ProjectController {
 
         List<Project> allProjects = projectsService.getUserProject(loggedInUsername);
 
+
         return mapProjects(allProjects);
     }
 
@@ -157,6 +163,28 @@ public class ProjectController {
     public ResponseEntity getDonatedProjects(@PathVariable String username) {
 
         return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping(path ="/executors/{projectId}")
+    public ResponseEntity getExecutorsForProject(@PathVariable long projectId) {
+
+        List<String> projectExecutors = projectInfoService.getProjectExecutors(projectId);
+
+        List<ExecutorRS> executorRSList = projectExecutors.stream()
+                .map(this::mapExecutor)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(executorRSList);
+    }
+
+    private ExecutorRS mapExecutor(String executorAddress) {
+
+        User userFromDatabase = userService.getUserFromDatabase(executorAddress);
+
+        ExecutorRS executorRS = new ExecutorRS();
+        executorRS.setName(userFromDatabase.getName());
+        executorRS.setAddress(userFromDatabase.getAccount());
+        return executorRS;
     }
 
     private ResponseEntity mapProjects(List<Project> allProjects) {

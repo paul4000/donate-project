@@ -20,6 +20,8 @@ import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectInfoService extends AbstractProjectService {
@@ -117,6 +119,21 @@ public class ProjectInfoService extends AbstractProjectService {
             BigInteger votes = projectFromBlockchain.votesCount().send();
 
             return votes.intValue();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            throw new ProjectInfoException();
+        }
+    }
+
+    public List<String> getProjectExecutors(long projectId) {
+        try{
+            com.project.donate.core.blockchain.Project projectFromBlockchain = getProjectFromBlockchain(projectId);
+
+            List<String> executors = projectFromBlockchain.getExecutors().send();
+
+            return executors;
 
         } catch (Exception e) {
             e.printStackTrace();

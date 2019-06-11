@@ -7,6 +7,7 @@ import com.project.donate.core.model.response.OpenValidationRS;
 import com.project.donate.core.model.response.VotingRS;
 import com.project.donate.core.service.project.DonationProjectService;
 import com.project.donate.core.service.project.HandlingProjectService;
+import com.project.donate.core.service.project.ProjectInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -17,21 +18,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(path = "/donate")
 public class DonationController {
 
     private DonationProjectService donationProjectService;
     private HandlingProjectService handlingProjectService;
+    private ProjectInfoService projectInfoService;
 
     @Autowired
-    public DonationController(DonationProjectService donationProjectService, HandlingProjectService handlingProjectService) {
+    public DonationController(DonationProjectService donationProjectService, HandlingProjectService handlingProjectService, ProjectInfoService projectInfoService) {
 
         Assert.notNull(donationProjectService, "DonationProjectService should not be null");
         Assert.notNull(handlingProjectService, "HandlingProjectService should not be null");
+        Assert.notNull(projectInfoService, "ProjectInfoService should not be null");
 
         this.handlingProjectService = handlingProjectService;
         this.donationProjectService = donationProjectService;
+        this.projectInfoService = projectInfoService;
     }
 
 
@@ -70,5 +76,6 @@ public class DonationController {
 
         return ResponseEntity.ok(votingRS);
     }
+
 
 }
