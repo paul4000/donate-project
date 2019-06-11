@@ -5,6 +5,7 @@ import com.project.donate.core.model.Project;
 import com.project.donate.core.model.dtos.DonationTO;
 import com.project.donate.core.model.dtos.OpenProjectRQ;
 import com.project.donate.core.model.response.OpenedProjectRS;
+import com.project.donate.core.model.response.ProjectExecutionRS;
 import com.project.donate.core.model.response.ProjectRS;
 import com.project.donate.core.service.project.HandlingProjectService;
 import com.project.donate.core.service.project.ProjectInfoService;
@@ -79,6 +80,17 @@ public class ProjectController {
         projectRS.setProjectAddress(openProjectAddress);
 
         return ResponseEntity.ok(projectRS);
+    }
+
+    @PostMapping(path = "/close/{projectId}")
+    public ResponseEntity closeProject(@PathVariable long projectId, @RequestParam String wallPass) {
+
+        boolean result = handlingProjectService.executeAndCloseProject(wallPass, projectId);
+
+        ProjectExecutionRS projectExecutionRS = new ProjectExecutionRS();
+        projectExecutionRS.setResult(result);
+
+        return ResponseEntity.ok(projectExecutionRS);
     }
 
     @GetMapping(path = "/all")
