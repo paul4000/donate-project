@@ -79,7 +79,7 @@ public class ProjectController {
     public ResponseEntity openProject(@RequestBody OpenProjectRQ projectRQ) {
         String openProjectAddress = handlingProjectService.openProject(projectRQ.getPasswordToWallet(), projectRQ.getProjectId(), projectRQ.getAmount());
 
-//        projectsService.registerInBlockchain(passwordToWallet, projectId);
+        handlingProjectService.registerInBlockchain(projectRQ.getPasswordToWallet(), projectRQ.getProjectId());
 
         OpenedProjectRS projectRS = new OpenedProjectRS();
         projectRS.setProjectAddress(openProjectAddress);
@@ -123,6 +123,7 @@ public class ProjectController {
             projectRS.setIfProjectSuccessful(project.getExecutedWithSuccess());
             projectRS.setGoalAmount(projectInfoService.getProjectContractGoalAmount(id));
             projectRS.setActualBalance(projectInfoService.getProjectCurrentBalance(id));
+            projectRS.setVerified(projectInfoService.getIfProjectVerified(id));
         }
 
         if(project.isValidationPhase()) {

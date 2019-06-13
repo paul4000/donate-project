@@ -6,16 +6,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 import org.web3j.abi.TypeReference;
+import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Bool;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Type;
 import org.web3j.abi.datatypes.generated.Bytes32;
-import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.RemoteCall;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.web3j.tuples.generated.Tuple4;
+import org.web3j.tuples.generated.Tuple3;
 import org.web3j.tx.Contract;
 import org.web3j.tx.TransactionManager;
 import org.web3j.tx.gas.ContractGasProvider;
@@ -30,19 +30,13 @@ import org.web3j.tx.gas.ContractGasProvider;
  * <p>Generated with web3j version 4.2.0.
  */
 public class ProjectHashStore extends Contract {
-    private static final String BINARY = "608060405234801561001057600080fd5b506105f8806100206000396000f3fe608060405234801561001057600080fd5b506004361061007e577c010000000000000000000000000000000000000000000000000000000060003504630564dfb38114610083578063093566a9146100b4578063107046bd146100d75780635592db6e1461011a578063cb33f4de1461013d578063d994947714610188575b600080fd5b6100a06004803603602081101561009957600080fd5b50356101ad565b604080519115158252519081900360200190f35b6100a0600480360360408110156100ca57600080fd5b5080359060200135610205565b6100f4600480360360208110156100ed57600080fd5b50356102a5565b604080519485526020850193909352838301919091526060830152519081900360800190f35b6100a06004803603604081101561013057600080fd5b50803590602001356102dd565b6101766004803603604081101561015357600080fd5b5073ffffffffffffffffffffffffffffffffffffffff8135169060200135610339565b60408051918252519081900360200190f35b6101ab6004803603604081101561019e57600080fd5b5080359060200135610369565b005b6000806101ba338461045e565b905060008112156101cf576000915050610200565b60006001828154811015156101e057fe5b906000526020600020906004020190504281600301819055506001925050505b919050565b60008061021184610551565b9050600081121561022657600091505061029f565b61022e6105a5565b600180548390811061023c57fe5b90600052602060002090600402016080604051908101604052908160008201548152602001600182015481526020016002820154815260200160038201548152505090508060600151816040015110801561029a5750838160200151145b925050505b92915050565b60018054829081106102b357fe5b60009182526020909120600490910201805460018201546002830154600390930154919350919084565b6000806102ea338561045e565b905060008112156102ff57600091505061029f565b600060018281548110151561031057fe5b600091825260209091206001600490920201818101869055426002909101559250505092915050565b60006020528160005260406000208181548110151561035457fe5b90600052602060002001600091509150505481565b6103716105a5565b50604080516080810182529283526020808401928352428483019081526000606086018181526001805480820182558184529751600489027fb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf681019190915596517fb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf788015592517fb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf8870155517fb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf9909501949094553384528382529183208054928301815583529091200155565b73ffffffffffffffffffffffffffffffffffffffff821660009081526020818152604080832080548251818502810185019093528083526060938301828280156104c757602002820191906000526020600020905b8154815260200190600101908083116104b3575b505083519394506000925050505b818110156105445784600184838151811015156104ee57fe5b602090810290910101518154811061050257fe5b906000526020600020906004020160000154141561053c57828181518110151561052857fe5b90602001906020020151935050505061029f565b6001016104d5565b5060001995945050505050565b600154600090815b8181101561059a578360018281548110151561057157fe5b90600052602060002090600402016000015414156105925791506102009050565b600101610559565b506000199392505050565b6040805160808101825260008082526020820181905291810182905260608101919091529056fea165627a7a72305820bdc89e30b96a858e19d007c4fc8be94081533e12e3c43fa5443e0aeb6db5eac60029";
+    private static final String BINARY = "608060405234801561001057600080fd5b506102f7806100206000396000f3fe608060405234801561001057600080fd5b506004361061005d577c010000000000000000000000000000000000000000000000000000000060003504630c1e24638114610062578063824a58df14610090578063ceb63092146100de575b600080fd5b61008e6004803603604081101561007857600080fd5b5080359060200135600160a060020a031661011e565b005b6100b6600480360360208110156100a657600080fd5b5035600160a060020a0316610207565b60408051938452600160a060020a039092166020840152151582820152519081900360600190f35b61010a600480360360408110156100f457600080fd5b50600160a060020a038135169060200135610246565b604080519115158252519081900360200190f35b600160a060020a038116600090815260208190526040902060010154819074010000000000000000000000000000000000000000900460ff161561016157600080fd5b6101696102ab565b5050604080516060810182529283523360208085019182526001858401818152600160a060020a03958616600090815292839052939091209451855590519301805491511515740100000000000000000000000000000000000000000274ff0000000000000000000000000000000000000000199490931673ffffffffffffffffffffffffffffffffffffffff199092169190911792909216179055565b60006020819052908152604090208054600190910154600160a060020a0381169074010000000000000000000000000000000000000000900460ff1683565b600160a060020a038216600090815260208190526040812060010154839074010000000000000000000000000000000000000000900460ff16151561028a57600080fd5b5050600160a060020a03919091166000908152602081905260409020541490565b60408051606081018252600080825260208201819052918101919091529056fea165627a7a723058206b99fd203c1c4ba88c6868884beda2d419e7c360159f1a873858990d01ac58ed0029";
 
-    public static final String FUNC_OPENPROJECT = "openProject";
+    public static final String FUNC_REGISTERPROJECT = "registerProject";
 
-    public static final String FUNC_ISNOTCHANGE = "isNotChange";
+    public static final String FUNC_PROJECTSTORE = "projectStore";
 
-    public static final String FUNC_PROJECTS = "project";
-
-    public static final String FUNC_UPDATEPROJECT = "updateProject";
-
-    public static final String FUNC_PROJECTINDICESSTORAGE = "projectIndicesStorage";
-
-    public static final String FUNC_REGISTERPROJECT = "registerProjectInDatabase";
+    public static final String FUNC_ISPROJECTVERSIONTHESAME = "isProjectVersionTheSame";
 
     @Deprecated
     protected ProjectHashStore(String contractAddress, Web3j web3j, Credentials credentials, BigInteger gasPrice, BigInteger gasLimit) {
@@ -62,64 +56,38 @@ public class ProjectHashStore extends Contract {
         super(BINARY, contractAddress, web3j, transactionManager, contractGasProvider);
     }
 
-    public RemoteCall<TransactionReceipt> openProject(byte[] _projectId) {
+    public RemoteCall<TransactionReceipt> registerProject(byte[] _projectHash, String _projectAddress) {
         final Function function = new Function(
-                FUNC_OPENPROJECT, 
-                Arrays.<Type>asList(new Bytes32(_projectId)),
+                FUNC_REGISTERPROJECT, 
+                Arrays.<Type>asList(new Bytes32(_projectHash),
+                new Address(_projectAddress)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
 
-    public RemoteCall<Boolean> isNotChange(byte[] _projectId, byte[] _projectHash) {
-        final Function function = new Function(FUNC_ISNOTCHANGE, 
-                Arrays.<Type>asList(new Bytes32(_projectId),
-                new Bytes32(_projectHash)),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Bool>() {}));
-        return executeRemoteCallSingleValueReturn(function, Boolean.class);
-    }
-
-    public RemoteCall<Tuple4<byte[], byte[], BigInteger, BigInteger>> projects(BigInteger param0) {
-        final Function function = new Function(FUNC_PROJECTS, 
-                Arrays.<Type>asList(new Uint256(param0)),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>() {}, new TypeReference<Bytes32>() {}, new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}));
-        return new RemoteCall<Tuple4<byte[], byte[], BigInteger, BigInteger>>(
-                new Callable<Tuple4<byte[], byte[], BigInteger, BigInteger>>() {
+    public RemoteCall<Tuple3<byte[], String, Boolean>> projectStore(String param0) {
+        final Function function = new Function(FUNC_PROJECTSTORE, 
+                Arrays.<Type>asList(new Address(param0)),
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>() {}, new TypeReference<Address>() {}, new TypeReference<Bool>() {}));
+        return new RemoteCall<Tuple3<byte[], String, Boolean>>(
+                new Callable<Tuple3<byte[], String, Boolean>>() {
                     @Override
-                    public Tuple4<byte[], byte[], BigInteger, BigInteger> call() throws Exception {
+                    public Tuple3<byte[], String, Boolean> call() throws Exception {
                         List<Type> results = executeCallMultipleValueReturn(function);
-                        return new Tuple4<byte[], byte[], BigInteger, BigInteger>(
+                        return new Tuple3<byte[], String, Boolean>(
                                 (byte[]) results.get(0).getValue(), 
-                                (byte[]) results.get(1).getValue(), 
-                                (BigInteger) results.get(2).getValue(), 
-                                (BigInteger) results.get(3).getValue());
+                                (String) results.get(1).getValue(), 
+                                (Boolean) results.get(2).getValue());
                     }
                 });
     }
 
-    public RemoteCall<TransactionReceipt> updateProject(byte[] _projectId, byte[] _newHash) {
-        final Function function = new Function(
-                FUNC_UPDATEPROJECT, 
-                Arrays.<Type>asList(new Bytes32(_projectId),
-                new Bytes32(_newHash)),
-                Collections.<TypeReference<?>>emptyList());
-        return executeRemoteCallTransaction(function);
-    }
-
-    public RemoteCall<BigInteger> projectIndicesStorage(String param0, BigInteger param1) {
-        final Function function = new Function(FUNC_PROJECTINDICESSTORAGE, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(param0), 
-                new Uint256(param1)),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}));
-        return executeRemoteCallSingleValueReturn(function, BigInteger.class);
-    }
-
-    public RemoteCall<TransactionReceipt> registerProject(byte[] _id, byte[] _projectHash) {
-        final Function function = new Function(
-                FUNC_REGISTERPROJECT, 
-                Arrays.<Type>asList(new Bytes32(_id),
-                new Bytes32(_projectHash)),
-                Collections.<TypeReference<?>>emptyList());
-        return executeRemoteCallTransaction(function);
+    public RemoteCall<Boolean> isProjectVersionTheSame(String _projectAddress, byte[] _hashToCheck) {
+        final Function function = new Function(FUNC_ISPROJECTVERSIONTHESAME, 
+                Arrays.<Type>asList(new Address(_projectAddress),
+                new Bytes32(_hashToCheck)),
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bool>() {}));
+        return executeRemoteCallSingleValueReturn(function, Boolean.class);
     }
 
     @Deprecated

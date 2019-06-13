@@ -79,13 +79,13 @@ public class HandlingProjectService extends AbstractProjectService {
 
         Credentials userWalletCredentials = getCredentials(passwordToWallet);
 
-        String hashedProject = ProjectHasher.hashProject(project.getData());
+        String hashedProject = ProjectHasher.hashProject(project.getData(), project.getSummary());
 
-        addToContract(userWalletCredentials, hashedProject, projectId);
+        addToContract(userWalletCredentials, hashedProject, project.getAddress());
     }
 
 
-    private void addToContract(Credentials userWalletCredentials, String hashedProject, long projectId) {
+    private void addToContract(Credentials userWalletCredentials, String hashedProject, String projectAddress) {
 
         String PROJECT_ADDRESS_PROPERTY = "address.contract.projectHashStore";
         Optional<String> contractAddress = PropertiesUtils.getPropertyFromConfig(PROJECT_ADDRESS_PROPERTY);
@@ -96,10 +96,9 @@ public class HandlingProjectService extends AbstractProjectService {
                 userWalletCredentials, new DefaultGasProvider());
 
         try {
-            byte[] idBytes = ProjectContractTypesConverter.convertProjectId(projectId);
             byte[] projectBytes = ProjectContractTypesConverter.convertProjectHash(hashedProject);
 
-            projectHashStore.registerProject(idBytes, projectBytes).send();
+            projectHashStore.registerProject(projectBytes, projectAddress).send();
 
         } catch (DecoderException e) {
             e.printStackTrace();

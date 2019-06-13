@@ -1,6 +1,7 @@
 package com.project.donate.core;
 
 import com.project.donate.core.blockchain.Project;
+import com.project.donate.core.blockchain.ProjectHashStore;
 import org.junit.Test;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.WalletUtils;
@@ -20,8 +21,8 @@ public class BlockchainOperationsTest {
         Credentials credentialsInitiator = WalletUtils.loadCredentials("account2",
                 "E:\\Studia\\Informatyka IX\\mgr\\chaindata\\keystore\\UTC--2019-05-11T14-58-16.382748100Z--41306825d5f39c6f21977115ea0d6be7a45679d2.json");
 
-//        Project projectDeployed = Project.deploy(web3j, credentialsInitiator, new DefaultGasProvider(),
-//                "test", new BigInteger("100")).send();
+        ProjectHashStore projectDeployed = ProjectHashStore.deploy(web3j, credentialsInitiator, new DefaultGasProvider()).send();
+        System.out.println(projectDeployed.getContractAddress());
 //
 //        System.out.println("Contract deployed under address: " + projectDeployed.getContractAddress());
 //
@@ -31,16 +32,16 @@ public class BlockchainOperationsTest {
 //        System.out.println("Balance: " + balance.toString());
 //        System.out.println("Goal amount: " + goalAmount.toString());
 
-        Credentials credentialsDonator = WalletUtils.loadCredentials("donator1",
-                "E:\\Studia\\Informatyka IX\\mgr\\chaindata\\keystore\\UTC--2019-06-06T20-22-14.901017000Z--401797f625488acd45ed49572563e333b0a978c6.json");
-
-
-        Project donatedProjects = Project.load("0x10B7a6f2ca45cBe14124f11A696AfF7728ccf32A",
-                web3j, credentialsDonator, new DefaultGasProvider());
-
-        TransactionReceipt transactionReceipt = donatedProjects.makeDonation(new BigInteger("50")).send();
-
-        System.out.println(transactionReceipt.toString());
+//        Credentials credentialsDonator = WalletUtils.loadCredentials("donator1",
+//                "E:\\Studia\\Informatyka IX\\mgr\\chaindata\\keystore\\UTC--2019-06-06T20-22-14.901017000Z--401797f625488acd45ed49572563e333b0a978c6.json");
+//
+//
+//        Project donatedProjects = Project.load("0x10B7a6f2ca45cBe14124f11A696AfF7728ccf32A",
+//                web3j, credentialsDonator, new DefaultGasProvider());
+//
+//        TransactionReceipt transactionReceipt = donatedProjects.makeDonation(new BigInteger("50")).send();
+//
+//        System.out.println(transactionReceipt.toString());
 
     }
 }

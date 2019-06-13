@@ -14,6 +14,7 @@ public class ProjectRS {
     private Boolean canUserVote;
     private int donatorsNumber;
     private int numberOfVotes;
+    private Boolean verified;
 
     public String getAddress() {
         return address;
@@ -109,5 +110,13 @@ public class ProjectRS {
 
     public void setNumberOfVotes(int numberOfVotes) {
         this.numberOfVotes = numberOfVotes;
+    }
+
+    public Boolean getVerified() {
+        return verified;
+    }
+
+    public void setVerified(Boolean verified) {
+        this.verified = verified;
     }
 }

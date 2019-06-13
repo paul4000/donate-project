@@ -3,9 +3,12 @@ package com.project.donate.core.service.project;
 import com.project.donate.core.Web3jServiceSupplier;
 import com.project.donate.core.auth.SecurityService;
 import com.project.donate.core.auth.UserService;
+import com.project.donate.core.blockchain.ProjectHashStore;
 import com.project.donate.core.exceptions.WalletCreationException;
 import com.project.donate.core.exceptions.blockchain.HandlingProjectException;
 import com.project.donate.core.exceptions.blockchain.ProjectInfoException;
+import com.project.donate.core.helpers.ProjectContractTypesConverter;
+import com.project.donate.core.helpers.ProjectHasher;
 import com.project.donate.core.model.Project;
 import com.project.donate.core.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +24,14 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
+
+import static com.project.donate.core.helpers.PropertiesUtils.getPropertyFromConfig;
 
 @Service
 public class ProjectInfoService extends AbstractProjectService {
+
+    private static String PROJECT_ADDRESS_PROPERTY = "address.contract.projectHashStore";
 
     @Autowired
     public ProjectInfoService(UserService userService, SecurityService securityService, ProjectsService projectsService, Web3jServiceSupplier web3jServiceSupplier) {
@@ -99,6 +106,17 @@ public class ProjectInfoService extends AbstractProjectService {
                 universalCredentials, new DefaultGasProvider());
     }
 
+    private ProjectHashStore getProjectHashStore() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
+        Credentials universalCredentials = Credentials.create(Keys.createEcKeyPair());
+
+        Optional<String> addressOfHashStore = getPropertyFromConfig(PROJECT_ADDRESS_PROPERTY);
+
+        if(addressOfHashStore.isEmpty()) throw new ProjectInfoException();
+
+        return com.project.donate.core.blockchain.ProjectHashStore.load(addressOfHashStore.get(), getWeb3jServiceSupplier().getWeb3j(),
+                universalCredentials, new DefaultGasProvider());
+    }
+
     public int getDonatorsNumber(long projectId) {
         try{
             com.project.donate.core.blockchain.Project projectFromBlockchain = getProjectFromBlockchain(projectId);
@@ -142,4 +160,21 @@ public class ProjectInfoService extends AbstractProjectService {
         }
     }
 
+    public boolean getIfProjectVerified(long projectId) {
+        Project project = getProjectsService().getProject(projectId);
+
+        try{
+            ProjectHashStore projectHashStore = getProjectHashStore();
+            String hashedProject = ProjectHasher.hashProject(project.getData(), project.getSummary());
+            byte[] projectBytes = ProjectContractTypesConverter.convertProjectHash(hashedProject);
+
+            return projectHashStore.isProjectVersionTheSame(project.getAddress(), projectBytes).send();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            throw new ProjectInfoException();
+        }
+
+    }
 }
