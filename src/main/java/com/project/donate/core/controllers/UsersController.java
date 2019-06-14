@@ -4,21 +4,27 @@ import com.project.donate.core.auth.SecurityServiceImpl;
 import com.project.donate.core.auth.UserService;
 import com.project.donate.core.exceptions.DuplicateUserException;
 import com.project.donate.core.exceptions.WalletCreationException;
+import com.project.donate.core.exceptions.WalletOpeningException;
 import com.project.donate.core.helpers.WalletHelper;
 import com.project.donate.core.model.Role;
 import com.project.donate.core.model.User;
 import com.project.donate.core.model.dtos.UserTO;
+import com.project.donate.core.model.response.AccountRS;
 import com.project.donate.core.model.response.AuthorizationTokenRS;
 import com.project.donate.core.model.response.ExecutorRS;
 import com.project.donate.core.service.accounts.AccountsService;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -147,6 +153,37 @@ public class UsersController {
 
         return ResponseEntity.ok(executorRSList);
     }
+
+    @GetMapping(path="/account")
+    public ResponseEntity getMyAccount() {
+
+        String loggedInUsername = securityService.findLoggedInUsername();
+        AccountRS accountRS = accountsService.getAccount(loggedInUsername);
+
+        return ResponseEntity.ok(accountRS);
+    }
+
+    @CrossOrigin(value = {"*"}, exposedHeaders = {"Content-Disposition"})
+    @GetMapping(path = "/wallet")
+    public ResponseEntity<byte[]> getWallet(){
+
+        String loggedInUsername = securityService.findLoggedInUsername();
+        User userFromDatabase = userService.getUserFromDatabase(loggedInUsername);
+        try {
+            ByteArrayResource walletOfUser = accountsService.getWalletOfUser(loggedInUsername);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.valueOf(MediaType.APPLICATION_JSON_VALUE));
+            headers.setContentLength(walletOfUser.contentLength());
+            headers.set("Content-Disposition", "attachment; filename=" + userFromDatabase.getWalletFile());
+
+            return new ResponseEntity<>(walletOfUser.getByteArray(), headers, HttpStatus.OK);
+
+        } catch (IOException e) {
+            throw new WalletOpeningException();
+        }
+    }
+
 
     private ExecutorRS mapExecutor(User user) {
         ExecutorRS executorRS = new ExecutorRS();
