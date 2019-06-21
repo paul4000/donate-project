@@ -114,6 +114,7 @@ public class ProjectController {
         projectRS.setId(project.getId());
         projectRS.setName(project.getName());
         projectRS.setSummary(project.getSummary());
+        projectRS.setOwner(project.getOwner().getUsername());
         projectRS.setOpened(project.isOpened());
 
         if (project.getAddress() != null) {

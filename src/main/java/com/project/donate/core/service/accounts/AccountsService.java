@@ -125,6 +125,7 @@ public class AccountsService {
         accountRS.setUsername(user.getUsername());
         accountRS.setAccount(user.getAccount());
         accountRS.setEmail(user.getEmail());
+        accountRS.setType(user.getRole().toString());
         setAccountBalance(user, accountRS);
     }
 

@@ -6,6 +6,7 @@ public class ProjectRS {
     private String name;
     private String summary;
     private String address;
+    private String owner;
     private Boolean isOpened;
     private Boolean isValidationPhase;
     private Boolean ifProjectSuccessful;
@@ -118,5 +119,13 @@ public class ProjectRS {
 
     public void setVerified(Boolean verified) {
         this.verified = verified;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }

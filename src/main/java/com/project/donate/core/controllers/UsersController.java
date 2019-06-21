@@ -26,6 +26,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -154,11 +155,10 @@ public class UsersController {
         return ResponseEntity.ok(executorRSList);
     }
 
-    @GetMapping(path="/account")
-    public ResponseEntity getMyAccount() {
+    @GetMapping(path="/account/{username}")
+    public ResponseEntity getAccount(@PathVariable String username) {
 
-        String loggedInUsername = securityService.findLoggedInUsername();
-        AccountRS accountRS = accountsService.getAccount(loggedInUsername);
+        AccountRS accountRS = accountsService.getAccount(username);
 
         return ResponseEntity.ok(accountRS);
     }

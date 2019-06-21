@@ -7,9 +7,20 @@ public class AccountRS {
     private String account;
     private double accountBalance;
     private String email;
+
+    private String type;
+
     private int numberOfProject;
     private long numberOfSuccessfulProjects;
     private long numberOfFailedProjects;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public long getNumberOfSuccessfulProjects() {
         return numberOfSuccessfulProjects;
