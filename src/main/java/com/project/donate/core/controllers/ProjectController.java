@@ -127,7 +127,7 @@ public class ProjectController {
             projectRS.setVerified(projectInfoService.getIfProjectVerified(id));
         }
 
-        if(project.isValidationPhase()) {
+        if (project.isValidationPhase()) {
             projectRS.setCanUserVote(projectInfoService.canUserVote(id));
             projectRS.setDonatorsNumber(projectInfoService.getDonatorsNumber(id));
             projectRS.setNumberOfVotes(projectInfoService.getNumberOfVotes(id));
@@ -167,7 +167,7 @@ public class ProjectController {
         return ResponseEntity.notFound().build();
     }
 
-    @PostMapping(path ="/executors/{projectId}")
+    @PostMapping(path = "/executors/{projectId}")
     public ResponseEntity getExecutorsForProject(@PathVariable long projectId) {
 
         List<String> projectExecutors = projectInfoService.getProjectExecutors(projectId);
@@ -201,6 +201,12 @@ public class ProjectController {
                     projectRS.setSummary(p.getSummary());
                     projectRS.setAddress(p.getAddress());
                     projectRS.setOpened(p.isOpened());
+
+                    if (p.getAddress() != null) {
+                        projectRS.setValidationPhase(p.isValidationPhase());
+                        projectRS.setIfProjectSuccessful(p.getExecutedWithSuccess());
+                    }
+
                     return projectRS;
                 })
                 .collect(Collectors.toList());
