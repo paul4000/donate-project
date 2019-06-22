@@ -1,16 +1,21 @@
 package com.project.donate.core.controllers;
 
+import com.project.donate.core.helpers.ResponsesMappers;
+import com.project.donate.core.model.Project;
 import com.project.donate.core.model.dtos.DonationTO;
 import com.project.donate.core.model.dtos.ExecutorsDTO;
 import com.project.donate.core.model.response.DonateRS;
 import com.project.donate.core.model.response.OpenValidationRS;
 import com.project.donate.core.model.response.VotingRS;
+import com.project.donate.core.service.donation.DonationInfoService;
 import com.project.donate.core.service.project.DonationProjectService;
 import com.project.donate.core.service.project.HandlingProjectService;
 import com.project.donate.core.service.project.ProjectInfoService;
+import com.project.donate.core.service.project.ProjectsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping(path = "/donate")
@@ -27,14 +34,20 @@ public class DonationController {
     private DonationProjectService donationProjectService;
     private HandlingProjectService handlingProjectService;
     private ProjectInfoService projectInfoService;
+    private ProjectsService projectsService;
+    private DonationInfoService donationInfoService;
 
     @Autowired
-    public DonationController(DonationProjectService donationProjectService, HandlingProjectService handlingProjectService, ProjectInfoService projectInfoService) {
+    public DonationController(DonationProjectService donationProjectService, HandlingProjectService handlingProjectService,
+                              ProjectInfoService projectInfoService, ProjectsService projectsService,
+                              DonationInfoService donationInfoService) {
 
         Assert.notNull(donationProjectService, "DonationProjectService should not be null");
         Assert.notNull(handlingProjectService, "HandlingProjectService should not be null");
         Assert.notNull(projectInfoService, "ProjectInfoService should not be null");
 
+        this.projectsService = projectsService;
+        this.donationInfoService = donationInfoService;
         this.handlingProjectService = handlingProjectService;
         this.donationProjectService = donationProjectService;
         this.projectInfoService = projectInfoService;
@@ -75,6 +88,18 @@ public class DonationController {
         votingRS.setId(value);
 
         return ResponseEntity.ok(votingRS);
+    }
+
+    @GetMapping(path = "/projects/{username}")
+    public ResponseEntity getDonatedProjects(@PathVariable String username) {
+
+        List<Long> userDonatedProjects = donationInfoService.getUserDonatedProjects(username);
+
+        List<Project> projectList = userDonatedProjects.stream()
+                .map(projectId -> projectsService.getProject(projectId))
+                .collect(Collectors.toList());
+
+        return ResponsesMappers.mapProjects(projectList);
     }
 
 

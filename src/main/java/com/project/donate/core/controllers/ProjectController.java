@@ -2,6 +2,7 @@ package com.project.donate.core.controllers;
 
 import com.project.donate.core.auth.SecurityServiceImpl;
 import com.project.donate.core.auth.UserService;
+import com.project.donate.core.helpers.ResponsesMappers;
 import com.project.donate.core.model.Project;
 import com.project.donate.core.model.User;
 import com.project.donate.core.model.dtos.OpenProjectRQ;
@@ -103,7 +104,7 @@ public class ProjectController {
 
         List<Project> allProjects = projectsService.getAllProjects();
 
-        return mapProjects(allProjects);
+        return ResponsesMappers.mapProjects(allProjects);
     }
 
     @GetMapping(path = "/detalis/{id}")
@@ -157,14 +158,7 @@ public class ProjectController {
 
         List<Project> allProjects = projectsService.getUserProject(loggedInUsername);
 
-
-        return mapProjects(allProjects);
-    }
-
-    @GetMapping(path = "/donated/{username}")
-    public ResponseEntity getDonatedProjects(@PathVariable String username) {
-
-        return ResponseEntity.notFound().build();
+        return ResponsesMappers.mapProjects(allProjects);
     }
 
     @PostMapping(path = "/executors/{projectId}")
@@ -190,28 +184,6 @@ public class ProjectController {
             executorRS.setAddress(userFromDatabase.getAccount());
         }
         return executorRS;
-    }
-
-    private ResponseEntity mapProjects(List<Project> allProjects) {
-        List<ProjectRS> projectsRS = allProjects.stream()
-                .map(p -> {
-                    ProjectRS projectRS = new ProjectRS();
-                    projectRS.setId(p.getId());
-                    projectRS.setName(p.getName());
-                    projectRS.setSummary(p.getSummary());
-                    projectRS.setAddress(p.getAddress());
-                    projectRS.setOpened(p.isOpened());
-
-                    if (p.getAddress() != null) {
-                        projectRS.setValidationPhase(p.isValidationPhase());
-                        projectRS.setIfProjectSuccessful(p.getExecutedWithSuccess());
-                    }
-
-                    return projectRS;
-                })
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(projectsRS);
     }
 
 }

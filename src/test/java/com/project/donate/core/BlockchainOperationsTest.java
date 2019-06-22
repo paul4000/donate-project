@@ -45,4 +45,9 @@ public class BlockchainOperationsTest {
 
         System.out.println(balance.toString());
     }
+
+    @Test
+    public void shouldRetrieveDonatedProject() {
+
+    }
 }
