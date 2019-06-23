@@ -16,6 +16,7 @@ public class ProjectRS {
     private int donatorsNumber;
     private int numberOfVotes;
     private Boolean verified;
+    private int validationTimeLeft;
 
     public String getAddress() {
         return address;
@@ -127,5 +128,13 @@ public class ProjectRS {
 
     public void setOwner(String owner) {
         this.owner = owner;
+    }
+
+    public int getValidationTimeLeft() {
+        return validationTimeLeft;
+    }
+
+    public void setValidationTimeLeft(int validationTimeLeft) {
+        this.validationTimeLeft = validationTimeLeft;
     }
 }

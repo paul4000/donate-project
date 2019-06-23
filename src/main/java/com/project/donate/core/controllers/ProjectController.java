@@ -116,22 +116,25 @@ public class ProjectController {
         projectRS.setName(project.getName());
         projectRS.setSummary(project.getSummary());
         projectRS.setOwner(project.getOwner().getUsername());
-        projectRS.setOpened(project.isOpened());
 
         if (project.getAddress() != null) {
 
+            projectInfoService.validateIfProjectAddressMatchesContractProjectId(project);
+
             projectRS.setAddress(project.getAddress());
-            projectRS.setValidationPhase(project.isValidationPhase());
-            projectRS.setIfProjectSuccessful(project.getExecutedWithSuccess());
+            projectRS.setOpened(projectInfoService.isProjectOpened(id));
+            projectRS.setValidationPhase(projectInfoService.isValidationPhase(id));
             projectRS.setGoalAmount(projectInfoService.getProjectContractGoalAmount(id));
             projectRS.setActualBalance(projectInfoService.getProjectCurrentBalance(id));
             projectRS.setVerified(projectInfoService.getIfProjectVerified(id));
+            projectRS.setIfProjectSuccessful(projectInfoService.isExecutedWithSuccess(id));
         }
 
-        if (project.isValidationPhase()) {
+        if (project.getAddress() != null && projectInfoService.isValidationPhase(id)) {
             projectRS.setCanUserVote(projectInfoService.canUserVote(id));
             projectRS.setDonatorsNumber(projectInfoService.getDonatorsNumber(id));
             projectRS.setNumberOfVotes(projectInfoService.getNumberOfVotes(id));
+            projectRS.setValidationTimeLeft(projectInfoService.getValidationTimeLeft(id));
         }
 
         return ResponseEntity.ok(projectRS);

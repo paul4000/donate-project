@@ -6,6 +6,7 @@ import com.project.donate.core.auth.UserService;
 import com.project.donate.core.blockchain.ProjectHashStore;
 import com.project.donate.core.exceptions.WalletCreationException;
 import com.project.donate.core.exceptions.blockchain.HandlingProjectException;
+import com.project.donate.core.exceptions.blockchain.ProjectDataCorruptedException;
 import com.project.donate.core.exceptions.blockchain.ProjectInfoException;
 import com.project.donate.core.helpers.ProjectContractTypesConverter;
 import com.project.donate.core.helpers.ProjectHasher;
@@ -44,7 +45,6 @@ public class ProjectInfoService extends AbstractProjectService {
 
             com.project.donate.core.blockchain.Project projectFromBlockchain = getProjectFromBlockchain(projectId);
 
-
             BigInteger goalAmount = projectFromBlockchain.getGoalAmount().send();
             BigDecimal bigDecimal = Convert.fromWei(goalAmount.toString(), Convert.Unit.ETHER);
 
@@ -64,7 +64,7 @@ public class ProjectInfoService extends AbstractProjectService {
         try {
             com.project.donate.core.blockchain.Project projectFromBlockchain = getProjectFromBlockchain(projectId);
 
-            BigInteger balanceProject = projectFromBlockchain.getBalance().send();
+            BigInteger balanceProject = projectFromBlockchain.finalGainedAmount().send();
             BigDecimal bigDecimal = Convert.fromWei(balanceProject.toString(), Convert.Unit.ETHER);
 
             return bigDecimal.doubleValue();
@@ -160,6 +160,61 @@ public class ProjectInfoService extends AbstractProjectService {
         }
     }
 
+    public boolean isProjectOpened(long projectId) {
+
+        try {
+
+            com.project.donate.core.blockchain.Project projectFromBlockchain = getProjectFromBlockchain(projectId);
+
+            Boolean validationPhase = projectFromBlockchain.validatingPhase().send();
+            Boolean executionPhase = projectFromBlockchain.executionPhase().send();
+
+            return !validationPhase && !executionPhase;
+
+        } catch (InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchProviderException e) {
+            e.printStackTrace();
+            throw new ProjectInfoException();
+        } catch (Exception e) {
+            throw new ProjectInfoException();
+        }
+    }
+
+    public boolean isValidationPhase(long id) {
+        try {
+
+            com.project.donate.core.blockchain.Project projectFromBlockchain = getProjectFromBlockchain(id);
+
+            return projectFromBlockchain.validatingPhase().send();
+
+        } catch (InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchProviderException e) {
+            e.printStackTrace();
+            throw new ProjectInfoException();
+        } catch (Exception e) {
+            throw new ProjectInfoException();
+        }
+    }
+
+    public Boolean isExecutedWithSuccess(long id) {
+        try {
+
+            com.project.donate.core.blockchain.Project projectFromBlockchain = getProjectFromBlockchain(id);
+
+            Boolean isExecuted = projectFromBlockchain.executionPhase().send();
+
+            if(!isExecuted) return null;
+
+            return projectFromBlockchain.getIfProjectExecutionSuccess().send();
+
+
+        } catch (InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchProviderException e) {
+            e.printStackTrace();
+            throw new ProjectInfoException();
+        } catch (Exception e) {
+            throw new ProjectInfoException();
+        }
+    }
+
+
     public boolean getIfProjectVerified(long projectId) {
         Project project = getProjectsService().getProject(projectId);
 
@@ -175,6 +230,42 @@ public class ProjectInfoService extends AbstractProjectService {
 
             throw new ProjectInfoException();
         }
+    }
 
+    public void validateIfProjectAddressMatchesContractProjectId(Project project) {
+
+        try {
+            com.project.donate.core.blockchain.Project projectFromBlockchain = getProjectFromBlockchain(project.getId());
+            String projectBlockchainVersion = projectFromBlockchain.projectId().send();
+
+            if(!projectBlockchainVersion.equals(String.valueOf(project.getId())))
+                throw new ProjectDataCorruptedException();
+
+        } catch (InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchProviderException e) {
+            e.printStackTrace();
+            throw new ProjectInfoException();
+        } catch (ProjectDataCorruptedException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ProjectInfoException();
+        }
+
+    }
+
+    public int getValidationTimeLeft(long id) {
+        try {
+
+            com.project.donate.core.blockchain.Project projectFromBlockchain = getProjectFromBlockchain(id);
+
+            BigInteger validationTimeLeft = projectFromBlockchain.getValidationTimeLeft().send();
+
+            return validationTimeLeft.intValue();
+
+        } catch (InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchProviderException e) {
+            e.printStackTrace();
+            throw new ProjectInfoException();
+        } catch (Exception e) {
+            throw new ProjectInfoException();
+        }
     }
 }
