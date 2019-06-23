@@ -2,24 +2,31 @@ pragma solidity ^0.5.3;
 
 contract Project {
 
+    // state variables
+    bool public validatingPhase;
+    bool public executionPhase;
+
+    // project data
     address public initiator;
     string public projectId;
-    mapping (address => uint) public donations;
-    address[] donators;
-
     uint public goalAmount;
+    uint public finalGainedAmount;
 
-    bool validatingPhase;
-    bool executionPhase;
-
+    // donations data
+    mapping (address => uint) public donations;
     mapping (address => uint) public executors;
+
+    address[] private donators;
     address[] public executorsAddresses;
 
-    uint distributedFunds;
 
+    // validation data
     mapping(address => int) public validation;
     int public forAgainstSum;
-    int public votesCount;
+    uint public votesCount;
+    uint public timeOfValidationPhaseStart;
+
+    uint distributedFunds;
 
     modifier initiatorAllowed() {
         require(msg.sender == initiator);
@@ -57,8 +64,12 @@ contract Project {
 
         require(address(this).balance <= goalAmount);
 
+        if(donations[msg.sender] == 0) {
+            donators.push(msg.sender);
+        }
+
         donations[msg.sender] += msg.value;
-        donators.push(msg.sender);
+        finalGainedAmount += msg.value;
 
         emit DonateProject(msg.sender, projectId);
         return true;
@@ -83,18 +94,25 @@ contract Project {
 
     function openValidationPhase() public initiatorAllowed returns (bool openedPhase) {
         validatingPhase = true;
+        timeOfValidationPhaseStart = block.timestamp;
         return true;
     }
 
     function closeValidatingPhase() public initiatorAllowed returns (bool closedPhase) {
+        require(canBeExecuted());
+
         validatingPhase = false;
         executionPhase = true;
         return true;
     }
 
-    function executeProject() public initiatorAllowed returns (bool ifDonated) {
+    function executeProject() public initiatorAllowed returns (bool ifDonted) {
 
         require(executionPhase);
+
+        uint howManyNotVoted = getDonatorsCount() - votesCount;
+
+        forAgainstSum += int(howManyNotVoted);
 
         if(forAgainstSum >= 0) {
 
@@ -103,10 +121,9 @@ contract Project {
                 address e = executorsAddresses[i];
                 address payable eSent = address(uint160(e));
                 eSent.send(executors[e]);
-
             }
 
-            ifDonated = true;
+            ifDonted = true;
 
         } else {
 
@@ -118,7 +135,7 @@ contract Project {
 
             }
 
-            ifDonated = false;
+            ifDonted = false;
         }
     }
 
@@ -136,7 +153,6 @@ contract Project {
         require(!validatingPhase);
 
         return (forAgainstSum >= 0);
-
     }
 
     function getExecutors() public view returns (address[] memory  exec) {
@@ -145,6 +161,27 @@ contract Project {
 
     function getDonatorsCount() public view returns (uint256 num) {
         return donators.length;
+    }
+
+    function getValidationTimeLeft() public view returns (uint result) {
+        uint timeDifference = now - timeOfValidationPhaseStart;
+
+        if(3 days > timeDifference) {
+            return (3 days - timeDifference);
+        } else {
+            return 0;
+        }
+    }
+
+    function canBeExecuted() public view returns (bool result) {
+        bool ifEveryoneVoted = getDonatorsCount() == votesCount;
+        bool ifValidationTimeIsUp = getValidationTimeLeft() <= 0;
+
+        return ifEveryoneVoted || ifValidationTimeIsUp;
+    }
+
+    function() external payable {
+        makeDonation();
     }
 
 }
