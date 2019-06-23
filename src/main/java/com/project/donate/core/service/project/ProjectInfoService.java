@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.Keys;
+import org.web3j.tuples.generated.Tuple3;
 import org.web3j.tx.gas.DefaultGasProvider;
 import org.web3j.utils.Convert;
 
@@ -26,6 +27,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.project.donate.core.helpers.PropertiesUtils.getPropertyFromConfig;
 
@@ -265,6 +268,35 @@ public class ProjectInfoService extends AbstractProjectService {
             e.printStackTrace();
             throw new ProjectInfoException();
         } catch (Exception e) {
+            throw new ProjectInfoException();
+        }
+    }
+
+    public Set<String> getUserProjects(String userAddress) {
+        try{
+            ProjectHashStore projectHashStore = getProjectHashStore();
+            List<String> allProjects = projectHashStore.getProjectsExisting().send();
+
+            return allProjects.stream()
+                    .filter(projectAddress -> {
+                        try {
+
+                            Tuple3<byte[], String, Boolean> projectTuple = projectHashStore.projectStore(projectAddress).send();
+
+                            String owner = projectTuple.getValue2();
+
+                            return owner.equals(userAddress);
+
+                        } catch (Exception e) {
+                            throw new ProjectInfoException();
+                        }
+                    })
+                    .collect(Collectors.toSet());
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
             throw new ProjectInfoException();
         }
     }

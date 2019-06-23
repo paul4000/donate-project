@@ -3,12 +3,14 @@ package com.project.donate.core.service.accounts;
 import com.project.donate.core.Web3jServiceSupplier;
 import com.project.donate.core.exceptions.WalletOpeningException;
 import com.project.donate.core.exceptions.blockchain.HandlingProjectException;
+import com.project.donate.core.exceptions.blockchain.ProjectDataCorruptedException;
 import com.project.donate.core.helpers.PropertiesUtils;
 import com.project.donate.core.model.Project;
 import com.project.donate.core.model.Role;
 import com.project.donate.core.model.User;
 import com.project.donate.core.model.response.AccountRS;
 import com.project.donate.core.repositories.UsersRepository;
+import com.project.donate.core.service.project.ProjectInfoService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -31,6 +33,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.project.donate.core.helpers.PropertiesUtils.getPropertyFromConfig;
@@ -45,13 +48,15 @@ public class AccountsService {
 
     private UsersRepository usersRepository;
     private Web3jServiceSupplier web3jServiceSupplier;
+    private ProjectInfoService projectInfoService;
 
     @Autowired
-    public AccountsService(UsersRepository usersRepository, Web3jServiceSupplier web3jServiceSupplier) {
+    public AccountsService(UsersRepository usersRepository, Web3jServiceSupplier web3jServiceSupplier, ProjectInfoService projectInfoService) {
 
         Assert.notNull(usersRepository, "UsersRepository should not be null");
         Assert.notNull(web3jServiceSupplier, "Web3jServiceSupplier should not be null");
 
+        this.projectInfoService = projectInfoService;
         this.usersRepository = usersRepository;
         this.web3jServiceSupplier = web3jServiceSupplier;
     }
@@ -104,19 +109,25 @@ public class AccountsService {
                 .filter(pr -> pr.getAddress() != null)
                 .collect(Collectors.toList());
 
-        long countOfSuccessful = projectList.stream()
-                .map(project -> TRUE.equals(project.getExecutedWithSuccess()))
-                .filter(p -> p)
+        Set<String> projectsListFromBlockchain = projectInfoService.getUserProjects(byUsername.getAccount());
+
+        Set<String> projectsFromDBAddresses = projectList.stream()
+                .map(Project::getAddress)
+                .collect(Collectors.toSet());
+
+        if(!projectsListFromBlockchain.equals(projectsFromDBAddresses)) throw new ProjectDataCorruptedException();
+
+
+        long successProjectsNumber = projectList.stream()
+                .filter(project ->TRUE.equals(projectInfoService.isExecutedWithSuccess(project.getId())))
                 .count();
 
-        long countOfFailed = projectList.stream()
-                .map(project -> FALSE.equals(project.getExecutedWithSuccess()))
-                .filter(p -> p)
+        long failedProjectsNumber = projectList.stream()
+                .filter(project ->FALSE.equals(projectInfoService.isExecutedWithSuccess(project.getId())))
                 .count();
 
-        response.setNumberOfFailedProjects(countOfFailed);
-        response.setNumberOfSuccessfulProjects(countOfSuccessful);
-
+        response.setNumberOfSuccessfulProjects(successProjectsNumber);
+        response.setNumberOfFailedProjects(failedProjectsNumber);
     }
 
 
