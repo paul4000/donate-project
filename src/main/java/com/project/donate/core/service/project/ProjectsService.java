@@ -15,6 +15,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -104,6 +105,12 @@ public class ProjectsService {
     public void changeExecutionStatus(long projectId, boolean value) {
         Project project = getProject(projectId);
         project.setExecutedWithSuccess(value);
+        projectRepository.save(project);
+    }
+
+    public void setCloseDate(long projectId) {
+        Project project = getProject(projectId);
+        project.setExecutionDate(new Date());
         projectRepository.save(project);
     }
 }

@@ -25,6 +25,7 @@ import org.web3j.tx.gas.DefaultGasProvider;
 import org.web3j.utils.Convert;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -63,6 +64,7 @@ public class HandlingProjectService extends AbstractProjectService {
 
             byId.setAddress(project.getContractAddress());
             byId.setOpened(true);
+            byId.setOpeningDate(new Date());
             projectRepository.save(byId);
 
             return project.getContractAddress();
@@ -170,6 +172,7 @@ public class HandlingProjectService extends AbstractProjectService {
 
             Boolean projectExecutionResult = projectFromBlockchain.getIfProjectExecutionSuccess().send();
             getProjectsService().changeExecutionStatus(projectId, projectExecutionResult);
+            getProjectsService().setCloseDate(projectId);
 
             return projectExecutionResult;
 

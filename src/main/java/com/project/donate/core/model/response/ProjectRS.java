@@ -17,6 +17,8 @@ public class ProjectRS {
     private int numberOfVotes;
     private Boolean verified;
     private int validationTimeLeft;
+    private String openingDate;
+    private String executionDate;
 
     public String getAddress() {
         return address;
@@ -136,5 +138,21 @@ public class ProjectRS {
 
     public void setValidationTimeLeft(int validationTimeLeft) {
         this.validationTimeLeft = validationTimeLeft;
+    }
+
+    public String getOpeningDate() {
+        return openingDate;
+    }
+
+    public void setOpeningDate(String openingDate) {
+        this.openingDate = openingDate;
+    }
+
+    public String getExecutionDate() {
+        return executionDate;
+    }
+
+    public void setExecutionDate(String executionDate) {
+        this.executionDate = executionDate;
     }
 }

@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -128,6 +129,14 @@ public class ProjectController {
             projectRS.setActualBalance(projectInfoService.getProjectCurrentBalance(id));
             projectRS.setVerified(projectInfoService.getIfProjectVerified(id));
             projectRS.setIfProjectSuccessful(projectInfoService.isExecutedWithSuccess(id));
+            if(project.getOpeningDate() != null) {
+                projectRS.setOpeningDate(new SimpleDateFormat("dd/MM/yyyy").format(project.getOpeningDate()));
+            }
+
+            if(project.getExecutionDate() != null) {
+                projectRS.setExecutionDate(new SimpleDateFormat("dd/MM/yyyy").format(project.getExecutionDate()));
+            }
+
         }
 
         if (project.getAddress() != null && projectInfoService.isValidationPhase(id)) {

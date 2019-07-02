@@ -12,7 +12,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
+import java.util.Date;
 
 @Entity
 @Table(name = "project")
@@ -35,6 +38,12 @@ public class Project {
     private boolean isValidationPhase;
     private Boolean executedWithSuccess;
 
+    @Temporal(TemporalType.DATE)
+    private Date openingDate;
+
+    @Temporal(TemporalType.DATE)
+    private Date executionDate;
+
     @Lob
     private byte[] data;
 
@@ -43,6 +52,14 @@ public class Project {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User owner;
+
+    public Date getOpeningDate() {
+        return openingDate;
+    }
+
+    public void setOpeningDate(Date openingDate) {
+        this.openingDate = openingDate;
+    }
 
     public long getId() {
         return id;
@@ -122,5 +139,13 @@ public class Project {
 
     public void setExecutedWithSuccess(Boolean executedWithSuccess) {
         this.executedWithSuccess = executedWithSuccess;
+    }
+
+    public Date getExecutionDate() {
+        return executionDate;
+    }
+
+    public void setExecutionDate(Date executionDate) {
+        this.executionDate = executionDate;
     }
 }
