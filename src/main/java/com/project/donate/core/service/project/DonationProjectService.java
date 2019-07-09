@@ -5,12 +5,10 @@ import com.project.donate.core.auth.SecurityService;
 import com.project.donate.core.auth.UserService;
 import com.project.donate.core.exceptions.blockchain.DonationException;
 import com.project.donate.core.exceptions.blockchain.HandlingProjectException;
-import com.project.donate.core.model.Project;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.web3j.tx.gas.DefaultGasProvider;
 import org.web3j.utils.Convert;
 
 import java.math.BigDecimal;

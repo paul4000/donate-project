@@ -68,18 +68,18 @@ public class ProjectTest {
 
 
         TransactionReceipt transactionReceiptMakeDonation = Project.load(project.getContractAddress(), web3j, KeyStore.getCredentials(DONATOR_3), new DefaultGasProvider())
-                .makeDonation(new BigInteger("10000000000000000000")).send();
+                .makeDonation(new BigInteger("20000000000000000000")).send();
 
         logger.info("--------------GAS USED--------------");
 
         logger.info(getGasUsed(transactionReceiptMakeDonation));
 
-        TransactionReceipt transactionReceiptMakeDonation1 = Project.load(project.getContractAddress(), web3j, KeyStore.getCredentials(DONATOR_3), new DefaultGasProvider())
-                .makeDonation(new BigInteger("10000000000000000000")).send();
-
-        logger.info("--------------GAS USED--------------");
-
-        logger.info(getGasUsed(transactionReceiptMakeDonation1));
+//        TransactionReceipt transactionReceiptMakeDonation1 = Project.load(project.getContractAddress(), web3j, KeyStore.getCredentials(DONATOR_3), new DefaultGasProvider())
+//                .makeDonation(new BigInteger("10000000000000000000")).send();
+//
+//        logger.info("--------------GAS USED--------------");
+//
+//        logger.info(getGasUsed(transactionReceiptMakeDonation1));
 
 
         logger.info("--------------ADD EXECUTORS--------------");

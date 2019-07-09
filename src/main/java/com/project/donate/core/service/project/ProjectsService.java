@@ -24,24 +24,21 @@ import java.util.Set;
 public class ProjectsService {
 
     private ProjectRepository projectRepository;
-    private Web3jServiceSupplier web3jServiceSupplier;
     private UserService userService;
     private SecurityService securityService;
 
     private final Logger logger = Logger.getLogger(ProjectsService.class);
 
     @Autowired
-    public ProjectsService(ProjectRepository projectRepository, Web3jServiceSupplier web3jServiceSupplier,
+    public ProjectsService(ProjectRepository projectRepository,
                            UserService userService, SecurityService securityService) {
 
         Assert.notNull(projectRepository, "ProjectRepository should not be null");
-        Assert.notNull(web3jServiceSupplier, "Web3jServiceSupplier should not be null");
         Assert.notNull(userService, "UserService should not be null");
         Assert.notNull(securityService, "SecurityService should not be null");
 
         this.securityService = securityService;
         this.userService = userService;
-        this.web3jServiceSupplier = web3jServiceSupplier;
         this.projectRepository = projectRepository;
     }
 
@@ -112,5 +109,9 @@ public class ProjectsService {
         Project project = getProject(projectId);
         project.setExecutionDate(new Date());
         projectRepository.save(project);
+    }
+
+    public ProjectRepository getProjectRepository() {
+        return projectRepository;
     }
 }

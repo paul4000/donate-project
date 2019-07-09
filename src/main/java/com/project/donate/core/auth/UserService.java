@@ -67,7 +67,7 @@ public class UserService {
         return byUsername;
     }
 
-    public User getByAdress(String address) {
+    public User getByAddress(String address) {
 
         return usersRepository.findByAccount(address);
     }

@@ -33,7 +33,6 @@ public class HandlingProjectService extends AbstractProjectService {
 
 
     private final static Logger logger = Logger.getLogger(HandlingProjectService.class);
-    private ProjectRepository projectRepository;
     private AccountsService accountsService;
 
     public HandlingProjectService(ProjectRepository projectRepository, Web3jServiceSupplier web3jServiceSupplier,
@@ -45,7 +44,6 @@ public class HandlingProjectService extends AbstractProjectService {
         Assert.notNull(accountsService, "AccountsService should not be null");
 
         this.accountsService = accountsService;
-        this.projectRepository = projectRepository;
     }
 
     public String openProject(String passwordToWallet, long projectId, String goal) {
@@ -65,7 +63,7 @@ public class HandlingProjectService extends AbstractProjectService {
             byId.setAddress(project.getContractAddress());
             byId.setOpened(true);
             byId.setOpeningDate(new Date());
-            projectRepository.save(byId);
+            getProjectsService().getProjectRepository().save(byId);
 
             return project.getContractAddress();
 

@@ -187,7 +187,7 @@ public class ProjectController {
 
     private ExecutorRS mapExecutor(String executorAddress) {
 
-        User userFromDatabase = userService.getByAdress(executorAddress);
+        User userFromDatabase = userService.getByAddress(executorAddress);
 
         ExecutorRS executorRS = new ExecutorRS();
 
