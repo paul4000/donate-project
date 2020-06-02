@@ -19,10 +19,10 @@ In the app there is three types of users.
 
 3. Flow 
 
-a. donation of the project starts when initator allows donators to send ETH for specific project 
-b. end of donation is when time limit or goal amount set by initiator is reached
-c. initiator has to indicate recipients of collected donations
-d. then there is the time for donators to vote, if they agree on chosen distribution of funds
+a. donation of the project starts when initator allows donators to send ETH for specific project <br/>
+b. end of donation is when time limit or goal amount set by initiator is reached <br/>
+c. initiator has to indicate recipients of collected donations <br/>
+d. then there is the time for donators to vote, if they agree on chosen distribution of funds <br/>
 e. basing on majority of votes, the project is executed or cancelled 
 
 ## Requirements 
